@@ -1,0 +1,62 @@
+package com.example.mymovies.data.repository
+
+import com.example.mymovies.data.local.movie.MovieDatabase
+import com.example.mymovies.data.mappers.toMovie
+import com.example.mymovies.data.mappers.toMovieEntity
+import com.example.mymovies.data.remote.MovieApi
+import com.example.mymovies.domain.model.Movie
+import com.example.mymovies.domain.repository.MovieListRepository
+import com.example.mymovies.util.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import retrofit2.HttpException
+import java.io.IOException
+import javax.inject.Inject
+
+class MovieListRepositoryImpl @Inject constructor(
+    private val movieApi: MovieApi,
+    private val movieDb: MovieDatabase
+) : MovieListRepository {
+    override suspend fun getMoviesList(
+        forceFetchFromRemote: Boolean,
+        page: Int
+    ): Flow<Resource<List<Movie>>> {
+        return flow {
+            emit(Resource.Loading(true))
+            val localMovieList = movieDb.movieDao.getMoviesList()
+            val shouldLoadLocalMoviesList = localMovieList.isNotEmpty() && !forceFetchFromRemote
+            if (shouldLoadLocalMoviesList) {
+                emit(Resource.Success(
+                    data = localMovieList.map { it.toMovie() }
+                ))
+                emit(Resource.Loading(false))
+                return@flow
+            }
+
+            val remoteMovieList = try {
+                movieApi.getMovieList(page)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                emit(Resource.Error(message = e.message)) // TODO:
+                return@flow
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                emit(Resource.Error(message = e.message))
+                return@flow
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emit(Resource.Error(message = e.message))
+                return@flow
+            }
+            val movieEntityList = remoteMovieList.movies.map { it.toMovieEntity() }
+            movieDb.movieDao.upsertMovieList(movieEntityList)
+            emit(Resource.Success(
+                movieEntityList.map {
+                    it.toMovie()
+                }
+            ))
+            emit(Resource.Loading(false))
+            return@flow
+        }
+    }
+}

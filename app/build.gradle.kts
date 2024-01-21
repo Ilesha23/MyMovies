@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
+//    kotlin("kapt")
     id("com.google.dagger.hilt.android")
 }
 
@@ -78,16 +79,25 @@ dependencies {
     // Compose Material3
     implementation("androidx.compose.material3:material3")
 
+    // Material3 icons extended
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     // Room
     implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
 
     // Hilt
     implementation("com.google.dagger:hilt-android:2.48")
-    ksp("com.google.dagger:hilt-android-compiler:2.44")
+    ksp("com.google.dagger:hilt-android-compiler:2.48")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
 
     // Tests
     testImplementation("junit:junit:4.13.2")
@@ -98,3 +108,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
+
+//kapt {
+//    correctErrorTypes = true
+//}

@@ -1,24 +1,23 @@
 package com.example.mymovies
 
-import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.mymovies.util.Screen
+import com.example.mymovies.ui.LoginScreen
+import com.example.mymovies.ui.ProfileScreen
 import com.example.mymovies.ui.theme.MyMoviesTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +54,26 @@ class MainActivity : ComponentActivity() {
                 .fillMaxSize()
         ) {
             Column {
+
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = Screen.Login.route) {
+                    composable(Screen.Login.route) { backStackEntry ->
+                        LoginScreen(
+                            onNavigate = {
+                                navController.navigate(Screen.Profile.route)
+                            },
+                            backStackEntry
+                        )
+                    }
+                    composable(
+                        Screen.Profile.route,
+//                        arguments = listOf(
+//
+//                        )
+                    ) {backStackEntry ->
+                        ProfileScreen(backStackEntry)
+                    }
+                }
 
             }
         }
