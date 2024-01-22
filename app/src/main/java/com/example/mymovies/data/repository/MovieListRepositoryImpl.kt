@@ -23,7 +23,7 @@ class MovieListRepositoryImpl @Inject constructor(
     ): Flow<Resource<List<Movie>>> {
         return flow {
             emit(Resource.Loading(true))
-            val localMovieList = movieDb.movieDao.getMoviesList()
+            val localMovieList = movieDb.movieDao.getMoviesList() // TODO: maybe always make api calls
             val shouldLoadLocalMoviesList = localMovieList.isNotEmpty() && !forceFetchFromRemote
             if (shouldLoadLocalMoviesList) {
                 emit(Resource.Success(
@@ -34,7 +34,7 @@ class MovieListRepositoryImpl @Inject constructor(
             }
 
             val remoteMovieList = try {
-                movieApi.getMovieList(page)
+                movieApi.getMovieList(page = page)
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error(message = e.message)) // TODO:

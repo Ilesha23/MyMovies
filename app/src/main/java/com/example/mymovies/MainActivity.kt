@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mymovies.util.Screen
 import com.example.mymovies.ui.LoginScreen
+import com.example.mymovies.ui.popular.PopularMovieScreen
 import com.example.mymovies.ui.ProfileScreen
 import com.example.mymovies.ui.theme.MyMoviesTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,7 +57,10 @@ class MainActivity : ComponentActivity() {
             Column {
 
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = Screen.Login.route) {
+                NavHost(navController = navController, startDestination = Screen.Popular.route) {
+                    composable(Screen.Popular.route) {
+                        PopularMovieScreen()
+                    }
                     composable(Screen.Login.route) { backStackEntry ->
                         LoginScreen(
                             onNavigate = {
