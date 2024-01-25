@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
+import java.util.Locale
 import javax.inject.Inject
 
 class MovieListRepositoryImpl @Inject constructor(
@@ -18,26 +19,33 @@ class MovieListRepositoryImpl @Inject constructor(
     private val movieDb: MovieDatabase
 ) : MovieListRepository {
     override suspend fun getMoviesList(
-        forceFetchFromRemote: Boolean,
+        forceFetchFromRemote: Boolean, // todo: remove (maybe)
         page: Int
     ): Flow<Resource<List<Movie>>> {
         return flow {
             emit(Resource.Loading(true))
-            val localMovieList = movieDb.movieDao.getMoviesList() // TODO: maybe always make api calls
-            val shouldLoadLocalMoviesList = localMovieList.isNotEmpty() && !forceFetchFromRemote
-            if (shouldLoadLocalMoviesList) {
-                emit(Resource.Success(
-                    data = localMovieList.map { it.toMovie() }
-                ))
-                emit(Resource.Loading(false))
-                return@flow
-            }
+//            val localMovieList = movieDb.movieDao.getMoviesList() // TODO: maybe always make api calls
+//            val shouldLoadLocalMoviesList = localMovieList.isNotEmpty() && !forceFetchFromRemote
+//            if (shouldLoadLocalMoviesList) {
+//                emit(Resource.Success(
+//                    data = localMovieList.map { it.toMovie() }
+//                ))
+//                emit(Resource.Loading(false))
+//                return@flow
+//            }
 
             val remoteMovieList = try {
-                movieApi.getMovieList(page = page)
+                movieApi.getMovieList(page = page, language = Locale.getDefault().toLanguageTag())
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error(message = e.message)) // TODO:
+                val localMovieList = movieDb.movieDao.getMoviesList()
+                if (localMovieList.isNotEmpty()) {
+                    emit(Resource.Success(
+                        data = localMovieList.map { it.toMovie() }
+                    ))
+                    emit(Resource.Loading(false))
+                }
                 return@flow
             } catch (e: HttpException) {
                 e.printStackTrace()

@@ -2,6 +2,7 @@ package com.example.mymovies.ui.popular
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mymovies.R
 import com.example.mymovies.domain.repository.MovieListRepository
 import com.example.mymovies.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,7 @@ class PopularMovieViewModel @Inject constructor(
     val movieListState = _movieListState.asStateFlow()
 
     init {
-        getMovieList(false) // TODO:
+        getMovieList(true) // TODO:
     }
 
     fun onEvent(event: MovieListUiEvent) {
@@ -47,7 +48,8 @@ class PopularMovieViewModel @Inject constructor(
                             _movieListState.update {
                                 it.copy(
                                     list = movieListState.value.list + list,
-                                    page = _movieListState.value.page + 1
+                                    page = _movieListState.value.page + 1,
+                                    error = null
                                 )
                             }
                         }
@@ -55,14 +57,16 @@ class PopularMovieViewModel @Inject constructor(
                     is Resource.Error -> {
                         _movieListState.update {
                             it.copy(
-                                isLoading = false
+                                isLoading = false,
+                                error = R.string.no_internet
                             )
                         }
                     }
                     is Resource.Loading -> {
                         _movieListState.update {
                             it.copy(
-                                isLoading = result.isLoading
+                                isLoading = result.isLoading,
+                                error = null
                             )
                         }
                     }
