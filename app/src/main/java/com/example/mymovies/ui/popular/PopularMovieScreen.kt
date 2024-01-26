@@ -1,7 +1,9 @@
 package com.example.mymovies.ui.popular
 
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,17 +15,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ImageNotSupported
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +52,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.example.mymovies.data.remote.MovieApi
 import com.example.mymovies.domain.model.Movie
+import kotlinx.coroutines.flow.collect
 
 @Composable
 fun PopularMovieScreen() {
@@ -55,16 +64,30 @@ fun PopularMovieScreen() {
     }
 
     Surface {
-        Column {
+        // TODO: maybe make smt scrollable
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = if (movieState.isLoading) Arrangement.Top else Arrangement.Center
+        ) {
             LazyVerticalGrid(
+                modifier = Modifier
+                    .fillMaxHeight(if (movieState.isLoading) 0.94f else 1f),
                 columns = GridCells.Adaptive(150.dp),
-                contentPadding = PaddingValues(vertical = 4.dp),
+//                contentPadding = PaddingValues(bottom = 50.dp/*vertical = 4.dp*/),
                 content = {
                     items(movieState.list.size) { index ->
                         MovieCard(movie = movieState.list[index])
+                        if (index == movieState.list.size - 1) {
+                            viewModel.onEvent(MovieListUiEvent.Paginate)
+                        }
                     }
                 }
             )
+            if (movieState.isLoading) {
+                CircularProgressIndicator()
+            }
         }
     }
 }

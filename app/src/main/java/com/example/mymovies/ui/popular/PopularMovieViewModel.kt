@@ -6,6 +6,7 @@ import com.example.mymovies.R
 import com.example.mymovies.domain.repository.MovieListRepository
 import com.example.mymovies.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -38,6 +39,7 @@ class PopularMovieViewModel @Inject constructor(
             _movieListState.update {
                 it.copy(isLoading = true)
             }
+
             movieListRepository.getMoviesList(
                 forceFetchFromRemote,
                 _movieListState.value.page
@@ -57,15 +59,17 @@ class PopularMovieViewModel @Inject constructor(
                     is Resource.Error -> {
                         _movieListState.update {
                             it.copy(
-                                isLoading = false,
+//                                isLoading = false,
                                 error = R.string.no_internet
                             )
                         }
+                        delay(3000)
+                        getMovieList(true) // TODO: just repeat few times
                     }
                     is Resource.Loading -> {
                         _movieListState.update {
                             it.copy(
-                                isLoading = result.isLoading,
+                                isLoading = /*true,*/result.isLoading,
                                 error = null
                             )
                         }
