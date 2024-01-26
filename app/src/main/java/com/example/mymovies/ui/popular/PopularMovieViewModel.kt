@@ -35,6 +35,8 @@ class PopularMovieViewModel @Inject constructor(
     }
 
     private fun getMovieList(forceFetchFromRemote: Boolean) {
+        if (_movieListState.value.isLoading)
+            return
         viewModelScope.launch {
             _movieListState.update {
                 it.copy(isLoading = true)

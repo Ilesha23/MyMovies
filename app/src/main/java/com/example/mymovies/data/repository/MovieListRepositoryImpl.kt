@@ -39,13 +39,13 @@ class MovieListRepositoryImpl @Inject constructor(
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error(message = e.message)) // TODO:
-                val localMovieList = movieDb.movieDao.getMoviesList()
-                if (localMovieList.isNotEmpty()) {
-                    emit(Resource.Success(
-                        data = localMovieList.map { it.toMovie() }
-                    ))
-                    emit(Resource.Loading(false))
-                }
+//                val localMovieList = movieDb.movieDao.getMoviesList()
+//                if (localMovieList.isNotEmpty()) {
+//                    emit(Resource.Success(
+//                        data = localMovieList.map { it.toMovie() }
+//                    ))
+//                }
+                emit(Resource.Loading(false))
                 return@flow
             } catch (e: HttpException) {
                 e.printStackTrace()
@@ -57,7 +57,7 @@ class MovieListRepositoryImpl @Inject constructor(
                 return@flow
             }
             val movieEntityList = remoteMovieList.movies.map { it.toMovieEntity() }
-            movieDb.movieDao.upsertMovieList(movieEntityList)
+//            movieDb.movieDao.upsertMovieList(movieEntityList)
             emit(Resource.Success(
                 movieEntityList.map {
                     it.toMovie()
