@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MyMovies</string>
     <string name="no_internet">No internet or server is not responding</string>
+    <string name="not_released_yes">Not released yet</string>
 </resources>

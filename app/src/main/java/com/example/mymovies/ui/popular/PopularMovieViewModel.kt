@@ -27,7 +27,7 @@ class PopularMovieViewModel @Inject constructor(
     }
 
     fun onEvent(event: MovieListUiEvent) {
-        when(event) {
+        when (event) {
             MovieListUiEvent.Paginate -> {
                 getMovieList(true)
             }
@@ -46,18 +46,22 @@ class PopularMovieViewModel @Inject constructor(
                 forceFetchFromRemote,
                 _movieListState.value.page
             ).collectLatest { result ->
-                when(result) {
+                when (result) {
                     is Resource.Success -> {
                         result.data?.let { list ->
+                            val uniqueItems = list.filter { newItem ->
+                                _movieListState.value.list.none { it.title == newItem.title }
+                            }
                             _movieListState.update {
                                 it.copy(
-                                    list = movieListState.value.list + list,
+                                    list = movieListState.value.list + uniqueItems,
                                     page = _movieListState.value.page + 1,
                                     error = null
                                 )
                             }
                         }
                     }
+
                     is Resource.Error -> {
                         _movieListState.update {
                             it.copy(
@@ -68,6 +72,7 @@ class PopularMovieViewModel @Inject constructor(
                         delay(3000)
                         getMovieList(true) // TODO: just repeat few times
                     }
+
                     is Resource.Loading -> {
                         _movieListState.update {
                             it.copy(

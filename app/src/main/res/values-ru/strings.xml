@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">MyMovies</string>
     <string name="no_internet">Нет интернета или сервер не отвечает</string>
+    <string name="not_released_yes">Еще не вышел</string>
 </resources>

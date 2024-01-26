@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,8 +39,11 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
+import com.example.mymovies.R
 import com.example.mymovies.data.remote.MovieApi
 import com.example.mymovies.domain.model.Movie
+import java.text.SimpleDateFormat
+import java.util.Date
 import kotlin.math.roundToInt
 
 @Composable
@@ -66,7 +71,7 @@ fun PopularMovieScreen() {
                 content = {
                     items(movieState.list.size) { index ->
                         MovieCard(movie = movieState.list[index])
-                        if (index == movieState.list.size - 1) { // todo check
+                        if (index == movieState.list.size - 1) {
                             viewModel.onEvent(MovieListUiEvent.Paginate)
                         }
                     }
@@ -136,18 +141,35 @@ fun MovieCard(movie: Movie) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 text = movie.title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold
             )
-            Text(
-                modifier = Modifier
-                    .padding(vertical = 4.dp),
-                text = ((movie.vote_average * 10).roundToInt().toDouble() / 10).toString(),
-                color =
-                if (movie.vote_average > 7)
-                    Color.Green
-                else if (movie.vote_average < 4)
-                    Color.Red
-                else Color.Yellow
-            )
+            runCatching {
+                val sdf = SimpleDateFormat("yyyy-MM-dd")
+                val dateFromString: Date = sdf.parse(movie.release_date)
+                val today = Date()
+                if (dateFromString.before(today) || dateFromString == today) {
+                    Text(
+                        modifier = Modifier
+                            .padding(vertical = 4.dp),
+                        text = ((movie.vote_average * 10).roundToInt().toDouble() / 10).toString(),
+                        color =
+                        if (movie.vote_average > 7)
+                            Color.Green
+                        else if (movie.vote_average < 4)
+                            Color.Red
+                        else Color.Yellow
+                    )
+                } else {
+                    Text(
+                        modifier = Modifier
+                            .padding(vertical = 4.dp),
+                        text = stringResource(id = R.string.not_released_yes),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
         }
     }
 }
