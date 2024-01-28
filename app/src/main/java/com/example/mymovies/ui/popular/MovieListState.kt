@@ -1,6 +1,6 @@
 package com.example.mymovies.ui.popular
 
-import com.example.mymovies.domain.model.Movie
+import com.example.mymovies.domain.model.movie.Movie
 
 data class MovieListState(
     val isLoading: Boolean = false,

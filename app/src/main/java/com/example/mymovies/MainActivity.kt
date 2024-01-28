@@ -8,13 +8,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.mymovies.util.Screen
 import com.example.mymovies.ui.LoginScreen
 import com.example.mymovies.ui.popular.PopularMovieScreen
 import com.example.mymovies.ui.ProfileScreen
+import com.example.mymovies.ui.details.DetailsScreen
 import com.example.mymovies.ui.theme.MyMoviesTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -59,7 +62,13 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = Screen.Popular.route) {
                     composable(Screen.Popular.route) {
-                        PopularMovieScreen()
+                        PopularMovieScreen(navController)
+                    }
+                    composable(
+                        Screen.Details.route + "/{movieId}",
+                        arguments = listOf(navArgument("movieId") { type = NavType.IntType })
+                    ) { bacStackEntry ->
+                        DetailsScreen(bacStackEntry)
                     }
                     composable(Screen.Login.route) { backStackEntry ->
                         LoginScreen(

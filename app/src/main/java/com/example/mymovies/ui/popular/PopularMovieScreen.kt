@@ -35,19 +35,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.mymovies.R
 import com.example.mymovies.data.remote.MovieApi
-import com.example.mymovies.domain.model.Movie
+import com.example.mymovies.domain.model.movie.Movie
+import com.example.mymovies.util.Screen
 import java.text.SimpleDateFormat
 import java.util.Date
 import kotlin.math.roundToInt
 
 @Composable
-fun PopularMovieScreen() {
+fun PopularMovieScreen(
+    navHostController: NavHostController
+) {
     val viewModel = hiltViewModel<PopularMovieViewModel>()
     val movieState = viewModel.movieListState.collectAsState().value
 
@@ -70,7 +74,7 @@ fun PopularMovieScreen() {
 //                contentPadding = PaddingValues(bottom = 50.dp/*vertical = 4.dp*/),
                 content = {
                     items(movieState.list.size) { index ->
-                        MovieCard(movie = movieState.list[index])
+                        MovieCard(movie = movieState.list[index], navHostController)
                         if (index == movieState.list.size - 1) {
                             viewModel.onEvent(MovieListUiEvent.Paginate)
                         }
@@ -86,7 +90,10 @@ fun PopularMovieScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MovieCard(movie: Movie) {
+fun MovieCard(
+    movie: Movie,
+    navHostController: NavHostController
+) {
     val imageState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(MovieApi.IMAGE_BASE_URL + movie.poster_path)
@@ -103,7 +110,9 @@ fun MovieCard(movie: Movie) {
             pressedElevation = 4.dp
         ),
         shape = RoundedCornerShape(20.dp),
-        onClick = {}
+        onClick = {
+            navHostController.navigate(Screen.Details.route + "/${movie.id}")
+        }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
