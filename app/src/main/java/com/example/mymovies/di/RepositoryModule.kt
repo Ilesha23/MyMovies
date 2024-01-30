@@ -1,8 +1,10 @@
 package com.example.mymovies.di
 
 import com.example.mymovies.data.repository.MovieDetailsRepositoryImpl
+import com.example.mymovies.data.repository.MovieImagesRepositoryImpl
 import com.example.mymovies.data.repository.MovieListRepositoryImpl
 import com.example.mymovies.domain.repository.MovieDetailsRepository
+import com.example.mymovies.domain.repository.MovieImagesRepository
 import com.example.mymovies.domain.repository.MovieListRepository
 import dagger.Binds
 import dagger.Module
@@ -21,5 +23,9 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindMovieDetailsRepository(movieDetailsRepositoryImpl: MovieDetailsRepositoryImpl): MovieDetailsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMovieImagesRepository(movieImagesRepositoryImpl: MovieImagesRepositoryImpl): MovieImagesRepository
 
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mymovies.data.repository.MovieDetailsRepositoryImpl
+import com.example.mymovies.data.repository.MovieImagesRepositoryImpl
 import com.example.mymovies.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val movieDetailsRepositoryImpl: MovieDetailsRepositoryImpl,
+    private val movieImagesRepositoryImpl: MovieImagesRepositoryImpl,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -27,8 +29,12 @@ class DetailsViewModel @Inject constructor(
     private val _detailsState = MutableStateFlow(DetailsState(details = null))
     val detailsState = _detailsState.asStateFlow()
 
+    private val _imagesState = MutableStateFlow(ImagesState())
+    val imagesState = _imagesState.asStateFlow()
+
     init {
         getDetails(movieId ?: -1)
+        getMovieImages(movieId ?: -1)
     }
 
     fun getDetails(movieId: Int) {
@@ -82,6 +88,51 @@ class DetailsViewModel @Inject constructor(
             maximumFractionDigits = 0
         }
         return currencyFormat.format(value.toLong())
+    }
+
+    fun getMovieImages(movieId: Int) {
+        viewModelScope.launch {
+            _imagesState.update {
+                it.copy(
+                    isLoading = true,
+                    error = null
+                )
+            }
+
+            movieImagesRepositoryImpl.getMovieImages(movieId)
+                .collectLatest {
+                    when(it) {
+                        is Resource.Success -> {
+                            val backdrops = it.data?.backdrops?.map { backdrop ->
+                                backdrop.file_path
+                            } ?: emptyList()
+                            _imagesState.update { state ->
+                                state.copy(
+                                    isLoading = false,
+                                    images = backdrops,
+                                    error = null
+                                )
+                            }
+                        }
+                        is Resource.Error -> {
+                            _imagesState.update { state ->
+                                state.copy(
+                                    isLoading = false,
+                                    error = it.message
+                                )
+                            }
+                        }
+                        is Resource.Loading -> {
+                            _imagesState.update { state ->
+                                state.copy(
+                                    isLoading = true,
+                                    error = null
+                                )
+                            }
+                        }
+                    }
+                }
+        }
     }
 
 }

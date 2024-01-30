@@ -1,7 +1,9 @@
 package com.example.mymovies.ui.details
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,12 +13,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ImageNotSupported
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
@@ -32,23 +47,21 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.mymovies.data.remote.MovieApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun DetailsScreen(bacStackEntry: NavBackStackEntry) {
     val viewModel = hiltViewModel<DetailsViewModel>()
     val detailsState = viewModel.detailsState.collectAsState().value
-    val backdropState = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(MovieApi.BACKDROP_BASE_URL + detailsState.details?.backdrop_path)
-            .size(Size.ORIGINAL)
-            .build()
-    ).state
+    val backdropsState = viewModel.imagesState.collectAsState().value
     val posterState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(MovieApi.IMAGE_BASE_URL + detailsState.details?.poster_path)
             .size(Size.ORIGINAL)
             .build()
     ).state
+    var expanded by remember { mutableStateOf(false) }
 
 
     detailsState.error?.let {
@@ -57,7 +70,8 @@ fun DetailsScreen(bacStackEntry: NavBackStackEntry) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
 //            verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -67,22 +81,7 @@ fun DetailsScreen(bacStackEntry: NavBackStackEntry) {
                 .height(220.dp)
 //                .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
-            if (backdropState is AsyncImagePainter.State.Success) {
-                Image(
-                    painter = backdropState.painter,
-                    contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            } else {
-                Image(
-                    imageVector = Icons.Rounded.ImageNotSupported,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize() // TODO:
-                )
-            }
+            InfiniteImageSlider(backdropsState.images)
         }
 
 
@@ -119,20 +118,120 @@ fun DetailsScreen(bacStackEntry: NavBackStackEntry) {
                 Text(text = detailsState.details?.title ?: "", textAlign = TextAlign.Center)
 //                Text(text = detailsState.details?.tagline ?: "", textAlign = TextAlign.Center)
                 Text(text = detailsState.details?.release_date ?: "")
-                Text(text = (viewModel.convertCurrencyToString(detailsState.details?.budget ?: 0)))
-                Text(text = (viewModel.convertCurrencyToString(detailsState.details?.revenue ?: 0)))
+                Text(
+                    text = (viewModel.convertCurrencyToString(
+                        detailsState.details?.budget ?: 0
+                    ))
+                )
+                Text(
+                    text = (viewModel.convertCurrencyToString(
+                        detailsState.details?.revenue ?: 0
+                    ))
+                )
                 Text(text = detailsState.details?.vote_average.toString())
             }
         }
 
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = detailsState.details?.tagline ?: "", textAlign = TextAlign.Center)
-            Text(text = detailsState.details?.overview ?: "")
+            Text(
+                text = detailsState.details?.overview ?: "",
+                maxLines = if (expanded) Int.MAX_VALUE else 3,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .clickable {
+                        expanded = !expanded
+                    }
+            )
         }
 
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun InfiniteImageSlider(paths: List<String>) {
+    val images = paths.take(30)
+    val pagerState = rememberPagerState(pageCount = {
+        images.size
+    })
+    var pagerScrollState by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxSize()
+        ) { page ->
+            SliderImage(imagePath = images[page])
+        }
+
+        LaunchedEffect(key1 = pagerScrollState) {
+            launch {
+                delay(2000)
+                pagerState.animateScrollToPage((pagerState.currentPage + 1) % pagerState.pageCount)
+                pagerScrollState = !pagerScrollState
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            repeat(pagerState.pageCount) { iteration ->
+                val color =
+                    if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
+                Box(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                        .size(4.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SliderImage(imagePath: String) {
+    val imageState = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(MovieApi.IMAGE_BASE_URL + imagePath)
+            .size(Size.ORIGINAL)
+            .build()
+    ).state
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        if (imageState is AsyncImagePainter.State.Success) {
+            Image(
+                painter = imageState.painter,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+            )
+        } else {
+            Image(
+                imageVector = Icons.Rounded.ImageNotSupported,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+            )
+        }
     }
 }

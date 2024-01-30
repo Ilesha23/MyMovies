@@ -13,12 +13,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.mymovies.util.Screen
 import com.example.mymovies.ui.LoginScreen
-import com.example.mymovies.ui.popular.PopularMovieScreen
 import com.example.mymovies.ui.ProfileScreen
 import com.example.mymovies.ui.details.DetailsScreen
+import com.example.mymovies.ui.popular.PopularMovieScreen
 import com.example.mymovies.ui.theme.MyMoviesTheme
+import com.example.mymovies.util.Screen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
 //                        arguments = listOf(
 //
 //                        )
-                    ) {backStackEntry ->
+                    ) { backStackEntry ->
                         ProfileScreen(backStackEntry)
                     }
                 }
