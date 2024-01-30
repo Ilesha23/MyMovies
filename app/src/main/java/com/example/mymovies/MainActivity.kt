@@ -16,6 +16,7 @@ import androidx.navigation.navArgument
 import com.example.mymovies.ui.LoginScreen
 import com.example.mymovies.ui.ProfileScreen
 import com.example.mymovies.ui.details.DetailsScreen
+import com.example.mymovies.ui.details.PosterScreen
 import com.example.mymovies.ui.popular.PopularMovieScreen
 import com.example.mymovies.ui.theme.MyMoviesTheme
 import com.example.mymovies.util.Screen
@@ -68,7 +69,13 @@ class MainActivity : ComponentActivity() {
                         Screen.Details.route + "/{movieId}",
                         arguments = listOf(navArgument("movieId") { type = NavType.IntType })
                     ) { bacStackEntry ->
-                        DetailsScreen(bacStackEntry)
+                        DetailsScreen(bacStackEntry, navController)
+                    }
+                    composable(
+                        Screen.Poster.route + "/{posterPath}",
+                        arguments = listOf(navArgument("posterPath") {type = NavType.StringType})
+                    ) { backStackEntry ->
+                        PosterScreen(backStackEntry, navController)
                     }
                     composable(Screen.Login.route) { backStackEntry ->
                         LoginScreen(
