@@ -26,20 +26,20 @@ class PopularMovieViewModel @Inject constructor(
     val movieViewState = _movieViewState.asStateFlow()
 
     init {
-        getMovieList(true) // TODO:
+        getMovieList(true, true) // TODO:
     }
 
     fun onEvent(event: MovieListUiEvent) {
         when (event) {
             MovieListUiEvent.Paginate -> {
-                if (_movieViewState.value.popularFilter) getMovieList(true)
+                if (_movieViewState.value.popularFilter) getMovieList(true, true)
                 if (_movieViewState.value.upcomingFilter) getUpcomingMovies(true)
 //                if (_movieViewState.value.topRatedFilter) getMovieList(true)
             }
         }
     }
 
-    private fun getMovieList(forceFetchFromRemote: Boolean) {
+    private fun getMovieList(forceFetchFromRemote: Boolean, shouldAddToList: Boolean) {
         if (_movieListState.value.isLoading)
             return
         viewModelScope.launch {
@@ -59,8 +59,8 @@ class PopularMovieViewModel @Inject constructor(
                             }
                             _movieListState.update {
                                 it.copy(
-                                    list = movieListState.value.list + uniqueItems,
-                                    page = _movieListState.value.page + 1,
+                                    list = if (shouldAddToList) movieListState.value.list + uniqueItems else uniqueItems,
+                                    page = if (shouldAddToList) _movieListState.value.page + 1 else _movieListState.value.page,
                                     error = null
                                 )
                             }
@@ -142,18 +142,19 @@ class PopularMovieViewModel @Inject constructor(
     }
 
     fun clickPopularFilter() {
-        if (!_movieViewState.value.popularFilter) _movieListState.update { it.copy(page = 1) }
+        if (!_movieViewState.value.popularFilter) _movieListState.update { it.copy(page = 1) } else return
         _movieViewState.update { it.copy(popularFilter = true, upcomingFilter = false, topRatedFilter = false) }
+        getMovieList(true, false)
     }
 
     fun clickUpcomingFilter() {
-        if (!_movieViewState.value.upcomingFilter) _movieListState.update { it.copy(page = 1) }
+        if (!_movieViewState.value.upcomingFilter) _movieListState.update { it.copy(page = 1) } else return
         _movieViewState.update { it.copy(popularFilter = false, upcomingFilter = true, topRatedFilter = false) }
         getUpcomingMovies(false)
     }
 
     fun clickTopRatedFilter() {
-        if (!_movieViewState.value.topRatedFilter) _movieListState.update { it.copy(page = 1) }
+        if (!_movieViewState.value.topRatedFilter) _movieListState.update { it.copy(page = 1) } else return
         _movieViewState.update { it.copy(popularFilter = false, upcomingFilter = false, topRatedFilter = true) }
     }
 
