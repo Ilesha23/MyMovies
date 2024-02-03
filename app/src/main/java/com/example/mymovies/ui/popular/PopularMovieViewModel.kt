@@ -3,7 +3,7 @@ package com.example.mymovies.ui.popular
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mymovies.R
-import com.example.mymovies.domain.repository.MovieListRepository
+import com.example.mymovies.data.repository.MovieListRepository
 import com.example.mymovies.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -22,6 +22,9 @@ class PopularMovieViewModel @Inject constructor(
     private val _movieListState = MutableStateFlow(MovieListState())
     val movieListState = _movieListState.asStateFlow()
 
+    private val _movieViewState = MutableStateFlow(MovieListViewState())
+    val movieViewState = _movieViewState.asStateFlow()
+
     init {
         getMovieList(true) // TODO:
     }
@@ -29,7 +32,9 @@ class PopularMovieViewModel @Inject constructor(
     fun onEvent(event: MovieListUiEvent) {
         when (event) {
             MovieListUiEvent.Paginate -> {
-                getMovieList(true)
+                if (_movieViewState.value.popularFilter) getMovieList(true)
+                if (_movieViewState.value.upcomingFilter) getUpcomingMovies(true)
+//                if (_movieViewState.value.topRatedFilter) getMovieList(true)
             }
         }
     }
@@ -69,8 +74,8 @@ class PopularMovieViewModel @Inject constructor(
                                 error = R.string.no_internet
                             )
                         }
-                        delay(3000)
-                        getMovieList(true) // TODO: just repeat few times
+//                        delay(3000)
+//                        getMovieList(true) // TODO: just repeat few times
                     }
 
                     is Resource.Loading -> {
@@ -84,6 +89,72 @@ class PopularMovieViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun getUpcomingMovies(shouldAddToList: Boolean) {
+        if (_movieListState.value.isLoading)
+            return
+
+        viewModelScope.launch {
+            _movieListState.update {
+                it.copy(isLoading = true)
+            }
+
+            movieListRepository.getUpcomingMovies(
+                _movieListState.value.page
+            ).collectLatest { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        result.data?.let { list ->
+                            val uniqueItems = list.filter { newItem ->
+                                _movieListState.value.list.none { it.title == newItem.title }
+                            }
+                            _movieListState.update {
+                                it.copy(
+                                    list = if (shouldAddToList) movieListState.value.list + uniqueItems else uniqueItems,
+                                    page = if (shouldAddToList) _movieListState.value.page + 1 else _movieListState.value.page,
+                                    error = null
+                                )
+                            }
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        _movieListState.update {
+                            it.copy(
+//                                isLoading = false,
+                                error = R.string.no_internet
+                            )
+                        }
+                    }
+
+                    is Resource.Loading -> {
+                        _movieListState.update {
+                            it.copy(
+                                isLoading = /*true,*/result.isLoading,
+                                error = null
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun clickPopularFilter() {
+        if (!_movieViewState.value.popularFilter) _movieListState.update { it.copy(page = 1) }
+        _movieViewState.update { it.copy(popularFilter = true, upcomingFilter = false, topRatedFilter = false) }
+    }
+
+    fun clickUpcomingFilter() {
+        if (!_movieViewState.value.upcomingFilter) _movieListState.update { it.copy(page = 1) }
+        _movieViewState.update { it.copy(popularFilter = false, upcomingFilter = true, topRatedFilter = false) }
+        getUpcomingMovies(false)
+    }
+
+    fun clickTopRatedFilter() {
+        if (!_movieViewState.value.topRatedFilter) _movieListState.update { it.copy(page = 1) }
+        _movieViewState.update { it.copy(popularFilter = false, upcomingFilter = false, topRatedFilter = true) }
     }
 
 }

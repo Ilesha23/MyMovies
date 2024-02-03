@@ -3,12 +3,14 @@ package com.example.mymovies.ui.details
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,6 +41,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -49,6 +53,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
+import com.example.mymovies.R
 import com.example.mymovies.data.remote.MovieApi
 import com.example.mymovies.util.Screen
 import kotlinx.coroutines.delay
@@ -59,13 +64,6 @@ fun DetailsScreen(bacStackEntry: NavBackStackEntry, navController: NavHostContro
     val viewModel = hiltViewModel<DetailsViewModel>()
     val detailsState = viewModel.detailsState.collectAsState().value
     val backdropsState = viewModel.imagesState.collectAsState().value
-    val posterState = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(MovieApi.IMAGE_BASE_URL + detailsState.details?.poster_path)
-            .size(Size.ORIGINAL)
-            .build()
-    ).state
-    var expanded by remember { mutableStateOf(false) }
 
 
     detailsState.error?.let {
@@ -76,89 +74,139 @@ fun DetailsScreen(bacStackEntry: NavBackStackEntry, navController: NavHostContro
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
-//            verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(220.dp)
-//                .background(MaterialTheme.colorScheme.primaryContainer)
-        ) {
-            InfiniteImageSlider(backdropsState.images)
-        }
 
+        BackDrop(backdropsState)
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .padding(16.dp)
-        ) {
-            if (posterState is AsyncImagePainter.State.Success) {
-                Image(
-                    painter = posterState.painter,
-                    contentDescription = null,
-                    contentScale = ContentScale.FillHeight,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(16.dp))
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = rememberRipple(bounded = false, radius = 0.dp)
-                        ) {
-                            navController.navigate(Screen.Poster.route + detailsState.details?.poster_path)
-                        }
-                )
-            } else {
-                Image(
-                    imageVector = Icons.Rounded.ImageNotSupported,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize() // TODO:
-                        .clip(RoundedCornerShape(16.dp))
-                )
-            }
-            Column(
+        Info(viewModel, navController, detailsState)
+
+        Overview(detailsState)
+
+    }
+}
+
+@Composable
+fun BackDrop(backdropsState: ImagesState) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(220.dp)
+    ) {
+        InfiniteImageSlider(backdropsState.images)
+    }
+}
+
+@Composable
+fun Info(
+    viewModel: DetailsViewModel,
+    navController: NavHostController,
+    detailsState: DetailsState
+) {
+    val posterState = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(MovieApi.IMAGE_BASE_URL + detailsState.details?.poster_path)
+            .size(Size.ORIGINAL)
+            .build()
+    ).state
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .padding(16.dp)
+    ) {
+        if (posterState is AsyncImagePainter.State.Success) {
+            Image(
+                painter = posterState.painter,
+                contentDescription = null,
+                contentScale = ContentScale.FillHeight,
                 modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(text = detailsState.details?.title ?: "", textAlign = TextAlign.Center)
-//                Text(text = detailsState.details?.tagline ?: "", textAlign = TextAlign.Center)
-                Text(text = detailsState.details?.release_date ?: "")
-                Text(
-                    text = (viewModel.convertCurrencyToString(
-                        detailsState.details?.budget ?: 0
-                    ))
-                )
-                Text(
-                    text = (viewModel.convertCurrencyToString(
-                        detailsState.details?.revenue ?: 0
-                    ))
-                )
-                Text(text = detailsState.details?.vote_average.toString())
-            }
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = detailsState.details?.tagline ?: "", textAlign = TextAlign.Center)
-            Text(
-                text = detailsState.details?.overview ?: "",
-                maxLines = if (expanded) Int.MAX_VALUE else 3,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .clickable {
-                        expanded = !expanded
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(16.dp))
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = rememberRipple(bounded = false, radius = 0.dp)
+                    ) {
+                        navController.navigate(Screen.Poster.route + detailsState.details?.poster_path)
                     }
+            )
+        } else {
+            Image(
+                imageVector = Icons.Rounded.ImageNotSupported,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize() // TODO:
+                    .clip(RoundedCornerShape(16.dp))
             )
         }
 
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = detailsState.details?.title ?: "", textAlign = TextAlign.Center)
+            Row {
+
+                Column(
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(text = stringResource(id = R.string.release_date) + ": ")
+                    Text(text = stringResource(id = R.string.budget) + ": ")
+                    Text(text = stringResource(id = R.string.revenue) + ": ")
+                    Text(text = stringResource(id = R.string.rating) + ": ")
+                }
+
+                Column(
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(text = detailsState.details?.release_date ?: "")
+                    Text(
+                        text = (viewModel.convertCurrencyToString(
+                            detailsState.details?.budget ?: 0
+                        ))
+                    )
+                    Text(
+                        text = (viewModel.convertCurrencyToString(
+                            detailsState.details?.revenue ?: 0
+                        ))
+                    )
+                    Text(text = detailsState.details?.vote_average.toString())
+                }
+
+            }
+        }
+    }
+}
+
+@Composable
+fun Overview(detailsState: DetailsState) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = detailsState.details?.tagline ?: "", textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.padding(top = 8.dp))
+        Text(
+            text = detailsState.details?.overview ?: "",
+            maxLines = if (expanded) Int.MAX_VALUE else 3,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .clickable {
+                    expanded = !expanded
+                }
+        )
     }
 }
 

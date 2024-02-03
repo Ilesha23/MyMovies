@@ -1,8 +1,8 @@
 package com.example.mymovies.data.remote.response.movie_images
 
 data class MovieImagesDto(
-    val backdrops: List<Backdrop>?,
+    val backdrops: List<BackdropDto>?,
     val id: Int?,
-    val logos: List<Logo>?,
-    val posters: List<Poster>?
+    val logos: List<LogoDto>?,
+    val posters: List<PosterDto>?
 )

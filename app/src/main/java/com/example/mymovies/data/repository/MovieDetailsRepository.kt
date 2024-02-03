@@ -1,4 +1,4 @@
-package com.example.mymovies.domain.repository
+package com.example.mymovies.data.repository
 
 import com.example.mymovies.domain.model.movie_details.MovieDetails
 import com.example.mymovies.util.Resource

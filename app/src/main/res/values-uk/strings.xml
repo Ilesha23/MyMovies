@@ -3,4 +3,11 @@
     <string name="app_name">MyMovies</string>
     <string name="no_internet">Нема інтрернету або сервер не відповідає</string>
     <string name="not_released_yes">Ще не вийшов</string>
+    <string name="release_date">Дата виходу</string>
+    <string name="budget">Бюджет</string>
+    <string name="revenue">Дохід</string>
+    <string name="rating">Рейтинг</string>
+    <string name="popular">Популярні</string>
+    <string name="upcoming">Скоро</string>
+    <string name="top_rated">Топ</string>
 </resources>

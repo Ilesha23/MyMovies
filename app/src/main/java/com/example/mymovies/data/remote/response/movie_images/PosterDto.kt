@@ -1,6 +1,6 @@
 package com.example.mymovies.data.remote.response.movie_images
 
-data class Poster(
+data class PosterDto(
     val aspect_ratio: Double?,
     val file_path: String?,
     val height: Int?,

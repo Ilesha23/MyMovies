@@ -2,24 +2,36 @@ package com.example.mymovies.ui.popular
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ImageNotSupported
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +44,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +61,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import kotlin.math.roundToInt
 
+@ExperimentalMaterial3Api
 @Composable
 fun PopularMovieScreen(
     navHostController: NavHostController
@@ -67,12 +81,18 @@ fun PopularMovieScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = if (movieState.isLoading) Arrangement.Top else Arrangement.Center
         ) {
+
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+
             LazyVerticalGrid(
                 modifier = Modifier
                     .fillMaxHeight(if (movieState.isLoading) 0.94f else 1f),
                 columns = GridCells.Fixed(2),
 //                contentPadding = PaddingValues(bottom = 50.dp/*vertical = 4.dp*/),
                 content = {
+                    header {
+                        ChipsRow()
+                    }
                     items(movieState.list.size) { index ->
                         MovieCard(movie = movieState.list[index], navHostController)
                         if (index == movieState.list.size - 1) {
@@ -85,6 +105,48 @@ fun PopularMovieScreen(
                 CircularProgressIndicator()
             }
         }
+    }
+}
+
+fun LazyGridScope.header(
+    content: @Composable LazyGridItemScope.() -> Unit
+) {
+    item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChipsRow() {
+    val viewModel = hiltViewModel<PopularMovieViewModel>()
+    val viewState = viewModel.movieViewState.collectAsState().value
+
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .selectableGroup(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        FilterChip(
+            selected = viewState.popularFilter,
+            onClick = { viewModel.clickPopularFilter() },
+            label = { Text(text = stringResource(id = R.string.popular)) },
+        )
+
+        Spacer(modifier = Modifier.padding(horizontal = 4.dp)) // TODO: maybe make smt as extension (or span)
+        
+        FilterChip(
+            selected = viewState.upcomingFilter,
+            onClick = { viewModel.clickUpcomingFilter() },
+            label = { Text(text = stringResource(id = R.string.upcoming)) },
+        )
+
+        Spacer(modifier = Modifier.padding(horizontal = 4.dp))
+
+        FilterChip(
+            selected = viewState.topRatedFilter,
+            onClick = { viewModel.clickTopRatedFilter() },
+            label = { Text(text = stringResource(id = R.string.top_rated)) },
+        )
     }
 }
 

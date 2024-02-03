@@ -1,9 +1,7 @@
 package com.example.mymovies.data.repository
 
-import android.util.Log
 import com.example.mymovies.data.remote.MovieApi
 import com.example.mymovies.domain.model.movie_images.MovieImages
-import com.example.mymovies.domain.repository.MovieImagesRepository
 import com.example.mymovies.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

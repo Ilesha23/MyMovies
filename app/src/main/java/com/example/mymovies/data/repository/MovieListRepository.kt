@@ -1,4 +1,4 @@
-package com.example.mymovies.domain.repository
+package com.example.mymovies.data.repository
 
 import com.example.mymovies.domain.model.movie.Movie
 import com.example.mymovies.util.Resource
@@ -8,6 +8,10 @@ interface MovieListRepository {
 
     suspend fun getMoviesList(
         forceFetchFromRemote: Boolean,
+        page: Int
+    ): Flow<Resource<List<Movie>>>
+
+    suspend fun getUpcomingMovies(
         page: Int
     ): Flow<Resource<List<Movie>>>
 

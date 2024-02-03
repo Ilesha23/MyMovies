@@ -18,6 +18,15 @@ interface MovieApi {
         @Query("api_key") apiKey: String = API_KEY
     ): MovieListDto
 
+    // TODO: maybe refactor repeatable code
+    // TODO: add date query
+    @GET("movie/upcoming")
+    suspend fun getUpcomingMovies(
+        @Query("page") page: Int,
+        @Query("language") language: String = "en-US",
+        @Query("api_key") apiKey: String = API_KEY
+    ): MovieListDto
+
     @GET("movie/{movie_id}")
     suspend fun getMovieDetails(
         @Path("movie_id") movieId: Int,
