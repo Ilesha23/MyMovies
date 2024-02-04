@@ -1,11 +1,11 @@
 package com.example.mymovies.ui.details
 
-import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mymovies.data.repository.MovieDetailsRepositoryImpl
-import com.example.mymovies.data.repository.MovieImagesRepositoryImpl
+import com.example.mymovies.data.repository.movie_credits.MovieCreditsRepositoryImpl
+import com.example.mymovies.data.repository.movie_details.MovieDetailsRepositoryImpl
+import com.example.mymovies.data.repository.movie_images.MovieImagesRepositoryImpl
 import com.example.mymovies.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +21,7 @@ import javax.inject.Inject
 class DetailsViewModel @Inject constructor(
     private val movieDetailsRepositoryImpl: MovieDetailsRepositoryImpl,
     private val movieImagesRepositoryImpl: MovieImagesRepositoryImpl,
+    private val movieCreditsRepositoryImpl: MovieCreditsRepositoryImpl,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -32,12 +33,16 @@ class DetailsViewModel @Inject constructor(
     private val _imagesState = MutableStateFlow(ImagesState())
     val imagesState = _imagesState.asStateFlow()
 
+    private val _castState = MutableStateFlow(CastState())
+    val castState = _castState.asStateFlow()
+
     init {
         getDetails(movieId ?: -1)
         getMovieImages(movieId ?: -1)
+        getCast(movieId ?: -1)
     }
 
-    fun getDetails(movieId: Int) {
+    private fun getDetails(movieId: Int) {
         viewModelScope.launch {
 
             _detailsState.update {
@@ -49,7 +54,7 @@ class DetailsViewModel @Inject constructor(
 
             movieDetailsRepositoryImpl.getDetails(movieId)
                 .collectLatest {
-                    when(it) {
+                    when (it) {
                         is Resource.Success -> {
                             _detailsState.update { state ->
                                 state.copy(
@@ -59,6 +64,7 @@ class DetailsViewModel @Inject constructor(
                                 )
                             }
                         }
+
                         is Resource.Error -> {
                             _detailsState.update { state ->
                                 state.copy(
@@ -67,6 +73,7 @@ class DetailsViewModel @Inject constructor(
                                 )
                             }
                         }
+
                         is Resource.Loading -> {
                             _detailsState.update { state ->
                                 state.copy(
@@ -90,7 +97,7 @@ class DetailsViewModel @Inject constructor(
         return currencyFormat.format(value.toLong())
     }
 
-    fun getMovieImages(movieId: Int) {
+    private fun getMovieImages(movieId: Int) {
         viewModelScope.launch {
             _imagesState.update {
                 it.copy(
@@ -101,7 +108,7 @@ class DetailsViewModel @Inject constructor(
 
             movieImagesRepositoryImpl.getMovieImages(movieId)
                 .collectLatest {
-                    when(it) {
+                    when (it) {
                         is Resource.Success -> {
                             val backdrops = it.data?.backdrops?.map { backdrop ->
                                 backdrop.file_path
@@ -114,6 +121,7 @@ class DetailsViewModel @Inject constructor(
                                 )
                             }
                         }
+
                         is Resource.Error -> {
                             _imagesState.update { state ->
                                 state.copy(
@@ -122,6 +130,7 @@ class DetailsViewModel @Inject constructor(
                                 )
                             }
                         }
+
                         is Resource.Loading -> {
                             _imagesState.update { state ->
                                 state.copy(
@@ -134,5 +143,50 @@ class DetailsViewModel @Inject constructor(
                 }
         }
     }
+
+    private fun getCast(movieId: Int) {
+        viewModelScope.launch {
+            _castState.update {
+                it.copy(
+                    isLoading = true,
+                    error = null
+                )
+            }
+
+            movieCreditsRepositoryImpl.getCast(movieId)
+                .collectLatest { resource ->
+                    when (resource) {
+                        is Resource.Success -> {
+                            _castState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    cast = resource.data ?: emptyList(),
+                                    error = null
+                                )
+                            }
+                        }
+
+                        is Resource.Error -> {
+                            _castState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    error = resource.message
+                                )
+                            }
+                        }
+
+                        is Resource.Loading -> {
+                            _castState.update {
+                                it.copy(
+                                    isLoading = true,
+                                    error = null
+                                )
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
 
 }

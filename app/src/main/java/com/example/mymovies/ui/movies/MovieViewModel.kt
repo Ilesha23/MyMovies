@@ -1,12 +1,11 @@
-package com.example.mymovies.ui.popular
+package com.example.mymovies.ui.movies
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mymovies.R
-import com.example.mymovies.data.repository.MovieListRepository
+import com.example.mymovies.data.repository.movie_list.MovieListRepository
 import com.example.mymovies.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -15,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PopularMovieViewModel @Inject constructor(
+class MovieViewModel @Inject constructor(
     private val movieListRepository: MovieListRepository
 ) : ViewModel() {
 

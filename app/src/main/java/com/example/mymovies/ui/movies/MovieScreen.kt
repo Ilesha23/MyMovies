@@ -1,8 +1,7 @@
-package com.example.mymovies.ui.popular
+package com.example.mymovies.ui.movies
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,20 +17,16 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ImageNotSupported
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,7 +39,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -66,7 +60,7 @@ import kotlin.math.roundToInt
 fun PopularMovieScreen(
     navHostController: NavHostController
 ) {
-    val viewModel = hiltViewModel<PopularMovieViewModel>()
+    val viewModel = hiltViewModel<MovieViewModel>()
     val movieState = viewModel.movieListState.collectAsState().value
 
     movieState.error?.let {
@@ -117,7 +111,7 @@ fun LazyGridScope.header(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChipsRow() {
-    val viewModel = hiltViewModel<PopularMovieViewModel>()
+    val viewModel = hiltViewModel<MovieViewModel>()
     val viewState = viewModel.movieViewState.collectAsState().value
 
     Row(

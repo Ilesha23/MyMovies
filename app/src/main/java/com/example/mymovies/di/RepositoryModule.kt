@@ -1,11 +1,13 @@
 package com.example.mymovies.di
 
-import com.example.mymovies.data.repository.MovieDetailsRepositoryImpl
-import com.example.mymovies.data.repository.MovieImagesRepositoryImpl
-import com.example.mymovies.data.repository.MovieListRepositoryImpl
-import com.example.mymovies.data.repository.MovieDetailsRepository
-import com.example.mymovies.data.repository.MovieImagesRepository
-import com.example.mymovies.data.repository.MovieListRepository
+import com.example.mymovies.data.repository.movie_credits.MovieCreditsRepository
+import com.example.mymovies.data.repository.movie_credits.MovieCreditsRepositoryImpl
+import com.example.mymovies.data.repository.movie_details.MovieDetailsRepositoryImpl
+import com.example.mymovies.data.repository.movie_images.MovieImagesRepositoryImpl
+import com.example.mymovies.data.repository.movie_list.MovieListRepositoryImpl
+import com.example.mymovies.data.repository.movie_details.MovieDetailsRepository
+import com.example.mymovies.data.repository.movie_images.MovieImagesRepository
+import com.example.mymovies.data.repository.movie_list.MovieListRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -27,5 +29,9 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindMovieImagesRepository(movieImagesRepositoryImpl: MovieImagesRepositoryImpl): MovieImagesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMovieCreditsRepository(movieCreditsRepositoryImpl: MovieCreditsRepositoryImpl): MovieCreditsRepository
 
 }

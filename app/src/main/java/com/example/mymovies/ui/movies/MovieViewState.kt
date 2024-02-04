@@ -1,4 +1,4 @@
-package com.example.mymovies.ui.popular
+package com.example.mymovies.ui.movies
 
 data class MovieListViewState(
     val popularFilter: Boolean = true,

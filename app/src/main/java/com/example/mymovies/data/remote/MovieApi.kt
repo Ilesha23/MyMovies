@@ -1,7 +1,9 @@
 package com.example.mymovies.data.remote
 
 import com.example.mymovies.data.remote.response.movie.MovieListDto
+import com.example.mymovies.data.remote.response.movie_credits.MovieCreditsDto
 import com.example.mymovies.data.remote.response.movie_details.MovieDetailsDto
+import com.example.mymovies.data.remote.response.movie_images.MovieImagesDto
 import com.example.mymovies.domain.model.movie_images.MovieImages
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -39,7 +41,14 @@ interface MovieApi {
         @Path("movie_id") movieId: Int,
         @Query("include_image_language") language: String = "en,null",
         @Query("api_key") apiKey: String = API_KEY
-    ): MovieImages
+    ): MovieImagesDto
+
+    @GET("movie/{movie_id}/credits")
+    suspend fun getMovieCredits(
+        @Path("movie_id") movieId: Int,
+        @Query("include_image_language") language: String = "en-US",
+        @Query("api_key") apiKey: String = API_KEY
+    ): MovieCreditsDto
 
 
 

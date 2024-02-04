@@ -1,4 +1,4 @@
-package com.example.mymovies.data.repository
+package com.example.mymovies.data.repository.movie_list
 
 import com.example.mymovies.data.local.movie.MovieDatabase
 import com.example.mymovies.data.mappers.toMovie

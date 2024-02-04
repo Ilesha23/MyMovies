@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -55,6 +57,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.example.mymovies.R
 import com.example.mymovies.data.remote.MovieApi
+import com.example.mymovies.domain.model.movie_credits.Cast
 import com.example.mymovies.util.Screen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -63,6 +66,7 @@ import kotlinx.coroutines.launch
 fun DetailsScreen(bacStackEntry: NavBackStackEntry, navController: NavHostController) {
     val viewModel = hiltViewModel<DetailsViewModel>()
     val detailsState = viewModel.detailsState.collectAsState().value
+    val castState = viewModel.castState.collectAsState().value
     val backdropsState = viewModel.imagesState.collectAsState().value
 
 
@@ -82,6 +86,8 @@ fun DetailsScreen(bacStackEntry: NavBackStackEntry, navController: NavHostContro
         Info(viewModel, navController, detailsState)
 
         Overview(detailsState)
+
+        CastRow(castState)
 
     }
 }
@@ -196,7 +202,11 @@ fun Overview(detailsState: DetailsState) {
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = detailsState.details?.tagline ?: "", textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
+        Text(
+            text = detailsState.details?.tagline ?: "",
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold
+        )
         Spacer(modifier = Modifier.padding(top = 8.dp))
         Text(
             text = detailsState.details?.overview ?: "",
@@ -206,6 +216,52 @@ fun Overview(detailsState: DetailsState) {
                 .clickable {
                     expanded = !expanded
                 }
+        )
+    }
+}
+
+@Composable
+fun CastRow(castState: CastState) {
+    val cast = castState.cast
+
+    LazyRow(
+        modifier = Modifier
+            .height(200.dp)
+    ) {
+        items(cast) {
+            CastCard(actor = it)
+        }
+    }
+}
+
+@Composable
+fun CastCard(actor: Cast) {
+    val posterState = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(MovieApi.IMAGE_BASE_URL + actor.profile_path)
+            .size(Size.ORIGINAL)
+            .build()
+    ).state
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.BottomStart
+    ) {
+        if (posterState is AsyncImagePainter.State.Success) {
+            Image(
+                painter = posterState.painter,
+                contentDescription = null,
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier
+                    .fillMaxHeight()
+            )
+        } else {
+            Image(imageVector = Icons.Rounded.ImageNotSupported, contentDescription = null)
+        }
+        Text(
+            text = actor.name,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

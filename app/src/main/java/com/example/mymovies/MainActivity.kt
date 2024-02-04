@@ -18,7 +18,7 @@ import com.example.mymovies.ui.LoginScreen
 import com.example.mymovies.ui.ProfileScreen
 import com.example.mymovies.ui.details.DetailsScreen
 import com.example.mymovies.ui.details.PosterScreen
-import com.example.mymovies.ui.popular.PopularMovieScreen
+import com.example.mymovies.ui.movies.PopularMovieScreen
 import com.example.mymovies.ui.theme.MyMoviesTheme
 import com.example.mymovies.util.Screen
 import dagger.hilt.android.AndroidEntryPoint

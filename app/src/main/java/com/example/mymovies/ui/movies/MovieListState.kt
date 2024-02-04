@@ -1,4 +1,4 @@
-package com.example.mymovies.ui.popular
+package com.example.mymovies.ui.movies
 
 import com.example.mymovies.domain.model.movie.Movie
 
