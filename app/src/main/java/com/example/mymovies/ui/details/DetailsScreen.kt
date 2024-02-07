@@ -3,14 +3,15 @@ package com.example.mymovies.ui.details
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +30,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ImageNotSupported
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -87,6 +90,8 @@ fun DetailsScreen(bacStackEntry: NavBackStackEntry, navController: NavHostContro
 
         Overview(detailsState)
 
+        Spacer(modifier = Modifier.padding(top = 20.dp))
+
         CastRow(castState)
 
     }
@@ -97,7 +102,6 @@ fun BackDrop(backdropsState: ImagesState) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(220.dp)
     ) {
         InfiniteImageSlider(backdropsState.images)
     }
@@ -226,7 +230,9 @@ fun CastRow(castState: CastState) {
 
     LazyRow(
         modifier = Modifier
-            .height(200.dp)
+            .height(200.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(cast) {
             CastCard(actor = it)
@@ -243,26 +249,57 @@ fun CastCard(actor: Cast) {
             .build()
     ).state
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.BottomStart
-    ) {
-        if (posterState is AsyncImagePainter.State.Success) {
-            Image(
-                painter = posterState.painter,
-                contentDescription = null,
-                contentScale = ContentScale.FillHeight,
+    Card {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .aspectRatio(500 / 750f)
+                .clickable {  },
+            contentAlignment = Alignment.BottomStart
+        ) {
+            if (posterState is AsyncImagePainter.State.Success) {
+                Image(
+                    painter = posterState.painter,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds
+                )
+            } else {
+                Image(
+                    imageVector = Icons.Rounded.ImageNotSupported,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
+
+            Box(
                 modifier = Modifier
-                    .fillMaxHeight()
-            )
-        } else {
-            Image(imageVector = Icons.Rounded.ImageNotSupported, contentDescription = null)
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Transparent,
+                                Color.Transparent,
+                                Color.Black
+                            ),
+                            startY = 0f,
+                            endY = 700f
+                        )
+                    ),
+                contentAlignment = Alignment.BottomStart
+            ) {
+                Text(
+                    text = actor.name,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.White,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                )
+            }
         }
-        Text(
-            text = actor.name,
-            overflow = TextOverflow.Ellipsis
-        )
     }
 }
 
@@ -278,6 +315,7 @@ fun InfiniteImageSlider(paths: List<String>) {
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .aspectRatio(533 / 300f)
     ) {
         HorizontalPager(
             state = pagerState,
@@ -322,19 +360,17 @@ fun InfiniteImageSlider(paths: List<String>) {
 fun SliderImage(imagePath: String) {
     val imageState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
-            .data(MovieApi.IMAGE_BASE_URL + imagePath)
+            .data(MovieApi.BACKDROP_BASE_URL + imagePath)
             .size(Size.ORIGINAL)
             .build()
     ).state
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+    Column {
         if (imageState is AsyncImagePainter.State.Success) {
             Image(
                 painter = imageState.painter,
                 contentDescription = null,
+                contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .fillMaxSize()
             )
@@ -342,7 +378,7 @@ fun SliderImage(imagePath: String) {
             Image(
                 imageVector = Icons.Rounded.ImageNotSupported,
                 contentDescription = null,
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.FillHeight,
                 modifier = Modifier
                     .fillMaxSize()
             )
