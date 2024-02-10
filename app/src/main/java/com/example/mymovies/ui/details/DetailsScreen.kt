@@ -31,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ImageNotSupported
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,6 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
@@ -61,6 +63,7 @@ import coil.size.Size
 import com.example.mymovies.R
 import com.example.mymovies.data.remote.MovieApi
 import com.example.mymovies.domain.model.movie_credits.Cast
+import com.example.mymovies.domain.model.movie_credits.Crew
 import com.example.mymovies.util.Screen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -70,6 +73,7 @@ fun DetailsScreen(bacStackEntry: NavBackStackEntry, navController: NavHostContro
     val viewModel = hiltViewModel<DetailsViewModel>()
     val detailsState = viewModel.detailsState.collectAsState().value
     val castState = viewModel.castState.collectAsState().value
+    val crewState = viewModel.crewState.collectAsState().value
     val backdropsState = viewModel.imagesState.collectAsState().value
 
 
@@ -92,7 +96,29 @@ fun DetailsScreen(bacStackEntry: NavBackStackEntry, navController: NavHostContro
 
         Spacer(modifier = Modifier.padding(top = 20.dp))
 
-        CastRow(castState)
+        Text(
+            text = stringResource(id = R.string.cast),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp),
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        CastRow(castState, navController)
+
+        Spacer(modifier = Modifier.padding(top = 16.dp))
+
+        Text(
+            text = stringResource(id = R.string.crew),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp),
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.titleMedium
+        )
+        
+        CrewRow(crewState)
 
     }
 }
@@ -225,7 +251,7 @@ fun Overview(detailsState: DetailsState) {
 }
 
 @Composable
-fun CastRow(castState: CastState) {
+fun CastRow(castState: CastState, navController: NavHostController) {
     val cast = castState.cast
 
     LazyRow(
@@ -235,13 +261,13 @@ fun CastRow(castState: CastState) {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(cast) {
-            CastCard(actor = it)
+            CastCard(actor = it, navController = navController)
         }
     }
 }
 
 @Composable
-fun CastCard(actor: Cast) {
+fun CastCard(actor: Cast, navController: NavController) {
     val posterState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(MovieApi.IMAGE_BASE_URL + actor.profile_path)
@@ -254,7 +280,9 @@ fun CastCard(actor: Cast) {
             modifier = Modifier
                 .fillMaxSize()
                 .aspectRatio(500 / 750f)
-                .clickable {  },
+                .clickable {
+                           navController.navigate(Screen.PersonDetails.route + "/" + actor.id)
+                },
             contentAlignment = Alignment.BottomStart
         ) {
             if (posterState is AsyncImagePainter.State.Success) {
@@ -303,6 +331,95 @@ fun CastCard(actor: Cast) {
     }
 }
 
+@Composable
+fun CrewRow(crewState: CrewState) {
+    val crew = crewState.crew
+
+    LazyRow(
+        modifier = Modifier
+            .height(200.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(crew) {
+            CrewCard(person = it)
+        }
+    }
+}
+
+@Composable
+fun CrewCard(person: Crew) {
+    val posterState = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(MovieApi.IMAGE_BASE_URL + person.profile_path)
+            .size(Size.ORIGINAL)
+            .build()
+    ).state
+
+    Card {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .aspectRatio(500 / 750f)
+                .clickable { },
+            contentAlignment = Alignment.BottomStart
+        ) {
+            if (posterState is AsyncImagePainter.State.Success) {
+                Image(
+                    painter = posterState.painter,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds
+                )
+            } else {
+                Image(
+                    imageVector = Icons.Rounded.ImageNotSupported,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Transparent,
+                                Color.Transparent,
+                                Color.Black
+                            ),
+                            startY = 0f,
+                            endY = 700f
+                        )
+                    ),
+                contentAlignment = Alignment.BottomStart
+            ) {
+                Column {
+                    Text(
+                        text = person.job,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = Color.White,
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                    )
+                    Text(
+                        text = person.name,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = Color.White,
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun InfiniteImageSlider(paths: List<String>) {
@@ -328,7 +445,9 @@ fun InfiniteImageSlider(paths: List<String>) {
         LaunchedEffect(key1 = pagerScrollState) {
             launch {
                 delay(2000)
-                pagerState.animateScrollToPage((pagerState.currentPage + 1) % pagerState.pageCount)
+                val nexPage = (pagerState.currentPage + 1) % pagerState.pageCount
+                val newPage = if (nexPage > pagerState.pageCount) 0 else nexPage
+                pagerState.animateScrollToPage(newPage)
                 pagerScrollState = !pagerScrollState
             }
         }

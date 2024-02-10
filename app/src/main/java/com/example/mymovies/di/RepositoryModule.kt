@@ -8,6 +8,8 @@ import com.example.mymovies.data.repository.movie_list.MovieListRepositoryImpl
 import com.example.mymovies.data.repository.movie_details.MovieDetailsRepository
 import com.example.mymovies.data.repository.movie_images.MovieImagesRepository
 import com.example.mymovies.data.repository.movie_list.MovieListRepository
+import com.example.mymovies.data.repository.person.PersonDetailsRepository
+import com.example.mymovies.data.repository.person.PersonDetailsRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,5 +35,9 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindMovieCreditsRepository(movieCreditsRepositoryImpl: MovieCreditsRepositoryImpl): MovieCreditsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPersonDetailsRepository(personDetailsRepositoryImpl: PersonDetailsRepositoryImpl): PersonDetailsRepository
 
 }

@@ -19,6 +19,7 @@ import com.example.mymovies.ui.ProfileScreen
 import com.example.mymovies.ui.details.DetailsScreen
 import com.example.mymovies.ui.details.PosterScreen
 import com.example.mymovies.ui.movies.PopularMovieScreen
+import com.example.mymovies.ui.person_details.PersonDetailsScreen
 import com.example.mymovies.ui.theme.MyMoviesTheme
 import com.example.mymovies.util.Screen
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,6 +73,17 @@ class MainActivity : ComponentActivity() {
                         arguments = listOf(navArgument("movieId") { type = NavType.IntType })
                     ) { bacStackEntry ->
                         DetailsScreen(bacStackEntry, navController)
+                    }
+                    composable(Screen.PersonDetails.route + "/{personId}",
+                        arguments = listOf(navArgument("personId") {type = NavType.IntType}))
+                    { backStackEntry ->
+                        PersonDetailsScreen(backStackEntry, navController)
+//                        val personId = backStackEntry.arguments?.getInt("personId")
+//                        personId?.let {
+//                            PersonDetailsScreen(navController = navController, personId = personId)
+//                        } ?: run {
+//                            navController.popBackStack()
+//                        }
                     }
                     composable(
                         Screen.Poster.route + "/{posterPath}",

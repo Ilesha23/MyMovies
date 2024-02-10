@@ -22,7 +22,7 @@ class DetailsViewModel @Inject constructor(
     private val movieDetailsRepositoryImpl: MovieDetailsRepositoryImpl,
     private val movieImagesRepositoryImpl: MovieImagesRepositoryImpl,
     private val movieCreditsRepositoryImpl: MovieCreditsRepositoryImpl,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val movieId = savedStateHandle.get<Int>("movieId")
@@ -36,10 +36,14 @@ class DetailsViewModel @Inject constructor(
     private val _castState = MutableStateFlow(CastState())
     val castState = _castState.asStateFlow()
 
+    private val _crewState = MutableStateFlow(CrewState())
+    val crewState = _crewState.asStateFlow()
+
     init {
         getDetails(movieId ?: -1)
         getMovieImages(movieId ?: -1)
         getCast(movieId ?: -1)
+        getCrew(movieId ?: -1)
     }
 
     private fun getDetails(movieId: Int) {
@@ -177,6 +181,50 @@ class DetailsViewModel @Inject constructor(
 
                         is Resource.Loading -> {
                             _castState.update {
+                                it.copy(
+                                    isLoading = true,
+                                    error = null
+                                )
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun getCrew(movieId: Int) {
+        viewModelScope.launch {
+            _crewState.update {
+                it.copy(
+                    isLoading = true,
+                    error = null
+                )
+            }
+
+            movieCreditsRepositoryImpl.getCrew(movieId)
+                .collectLatest { resource ->
+                    when (resource) {
+                        is Resource.Success -> {
+                            _crewState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    crew = resource.data ?: emptyList(),
+                                    error = null
+                                )
+                            }
+                        }
+
+                        is Resource.Error -> {
+                            _crewState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    error = resource.message
+                                )
+                            }
+                        }
+
+                        is Resource.Loading -> {
+                            _crewState.update {
                                 it.copy(
                                     isLoading = true,
                                     error = null

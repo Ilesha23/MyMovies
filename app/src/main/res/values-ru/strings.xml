@@ -10,4 +10,6 @@
     <string name="popular">Популярные</string>
     <string name="upcoming">Скоро</string>
     <string name="top_rated">Топ</string>
+    <string name="cast">Актеры</string>
+    <string name="crew">Команда</string>
 </resources>

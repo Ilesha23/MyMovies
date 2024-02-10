@@ -3,6 +3,7 @@ package com.example.mymovies.data.repository.movie_credits
 import com.example.mymovies.data.mappers.toMovieCredits
 import com.example.mymovies.data.remote.MovieApi
 import com.example.mymovies.domain.model.movie_credits.Cast
+import com.example.mymovies.domain.model.movie_credits.Crew
 import com.example.mymovies.domain.model.movie_credits.MovieCredits
 import com.example.mymovies.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -53,6 +54,23 @@ class MovieCreditsRepositoryImpl @Inject constructor(
                 is Resource.Success -> {
                     val castList = resource.data?.cast ?: emptyList()
                     Resource.Success(castList)
+                }
+                is Resource.Error -> {
+                    Resource.Error(resource.message)
+                }
+                is Resource.Loading -> {
+                    Resource.Loading(resource.isLoading)
+                }
+            }
+        }
+    }
+
+    override suspend fun getCrew(id: Int): Flow<Resource<List<Crew>>> {
+        return getCredits(id).map { resource ->
+            when(resource) {
+                is Resource.Success -> {
+                    val crewList = resource.data?.crew ?: emptyList()
+                    Resource.Success(crewList)
                 }
                 is Resource.Error -> {
                     Resource.Error(resource.message)
