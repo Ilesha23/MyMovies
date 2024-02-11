@@ -15,4 +15,8 @@ interface MovieListRepository {
         page: Int
     ): Flow<Resource<List<Movie>>>
 
+    suspend fun getTopRatedMovies(
+        page: Int
+    ): Flow<Resource<List<Movie>>>
+
 }

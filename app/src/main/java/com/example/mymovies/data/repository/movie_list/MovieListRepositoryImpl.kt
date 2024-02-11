@@ -55,7 +55,7 @@ class MovieListRepositoryImpl @Inject constructor(
                 emit(Resource.Error(message = e.message))
                 return@flow
             }
-            val movieEntityList = remoteMovieList.movies.map { it.toMovieEntity() }
+            val movieEntityList = remoteMovieList.movies.map { it.toMovieEntity() } // TODO: remove
 //            movieDb.movieDao.upsertMovieList(movieEntityList)
             emit(Resource.Success(
                 movieEntityList.map {
@@ -98,4 +98,36 @@ class MovieListRepositoryImpl @Inject constructor(
             return@flow
         }
     }
+
+    override suspend fun getTopRatedMovies(page: Int): Flow<Resource<List<Movie>>> {
+        return flow {
+            emit(Resource.Loading())
+
+            val remoteTopRatedMovieList = try {
+                movieApi.getTopRatedMovies(page, Locale.getDefault().toLanguageTag())
+            } catch (e: IOException) {
+                e.printStackTrace()
+                emit(Resource.Error(message = e.message)) // TODO:
+                emit(Resource.Loading(false))
+                return@flow
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                emit(Resource.Error(message = e.message))
+                return@flow
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emit(Resource.Error(message = e.message))
+                return@flow
+            }
+            val movieEntityList = remoteTopRatedMovieList.movies.map { it.toMovieEntity() }
+            emit(Resource.Success(
+                movieEntityList.map {
+                    it.toMovie()
+                }
+            ))
+            emit(Resource.Loading(false))
+            return@flow
+        }
+    }
+
 }

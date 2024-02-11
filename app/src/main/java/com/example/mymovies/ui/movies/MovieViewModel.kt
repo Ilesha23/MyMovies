@@ -33,7 +33,7 @@ class MovieViewModel @Inject constructor(
             MovieListUiEvent.Paginate -> {
                 if (_movieViewState.value.popularFilter) getMovieList(true, true)
                 if (_movieViewState.value.upcomingFilter) getUpcomingMovies(true)
-//                if (_movieViewState.value.topRatedFilter) getMovieList(true)
+                if (_movieViewState.value.topRatedFilter) getTopRatedMovies(true)
             }
         }
     }
@@ -140,6 +140,56 @@ class MovieViewModel @Inject constructor(
         }
     }
 
+    private fun getTopRatedMovies(shouldAddToList: Boolean) {
+        if (_movieListState.value.isLoading)
+            return
+
+        viewModelScope.launch {
+            _movieListState.update {
+                it.copy(isLoading = true)
+            }
+
+            movieListRepository.getTopRatedMovies(
+                _movieListState.value.page
+            ).collectLatest { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        result.data?.let { list ->
+                            val uniqueItems = list.filter { newItem ->
+                                _movieListState.value.list.none { it.title == newItem.title }
+                            }
+                            _movieListState.update {
+                                it.copy(
+                                    list = if (shouldAddToList) movieListState.value.list + uniqueItems else uniqueItems,
+                                    page = if (shouldAddToList) _movieListState.value.page + 1 else _movieListState.value.page,
+                                    error = null
+                                )
+                            }
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        _movieListState.update {
+                            it.copy(
+//                                isLoading = false,
+                                error = R.string.no_internet
+                            )
+                        }
+                    }
+
+                    is Resource.Loading -> {
+                        _movieListState.update {
+                            it.copy(
+                                isLoading = /*true,*/result.isLoading,
+                                error = null
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     fun clickPopularFilter() {
         if (!_movieViewState.value.popularFilter) _movieListState.update { it.copy(page = 1) } else return
         _movieViewState.update { it.copy(popularFilter = true, upcomingFilter = false, topRatedFilter = false) }
@@ -155,6 +205,7 @@ class MovieViewModel @Inject constructor(
     fun clickTopRatedFilter() {
         if (!_movieViewState.value.topRatedFilter) _movieListState.update { it.copy(page = 1) } else return
         _movieViewState.update { it.copy(popularFilter = false, upcomingFilter = false, topRatedFilter = true) }
+        getTopRatedMovies(false)
     }
 
 }

@@ -17,20 +17,29 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.rounded.ImageNotSupported
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,44 +71,67 @@ fun PopularMovieScreen(
 ) {
     val viewModel = hiltViewModel<MovieViewModel>()
     val movieState = viewModel.movieListState.collectAsState().value
+    val gridState = rememberLazyGridState()
+    var isFabClicked by remember { mutableStateOf(false) }
 
     movieState.error?.let {
         Toast.makeText(LocalContext.current, stringResource(id = it), Toast.LENGTH_SHORT).show()
     }
 
-    Surface {
-        // TODO: maybe make smt scrollable
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = if (movieState.isLoading) Arrangement.Top else Arrangement.Center
-        ) {
-
-            Spacer(modifier = Modifier.padding(top = 8.dp))
-
-            LazyVerticalGrid(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Surface {
+            // TODO: maybe make smt scrollable
+            Column(
                 modifier = Modifier
-                    .fillMaxHeight(if (movieState.isLoading) 0.94f else 1f),
-                columns = GridCells.Fixed(2),
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = if (movieState.isLoading) Arrangement.Top else Arrangement.Center
+            ) {
+
+                Spacer(modifier = Modifier.padding(top = 8.dp))
+
+                LazyVerticalGrid(
+                    state = gridState,
+                    modifier = Modifier
+                        .fillMaxHeight(if (movieState.isLoading) 0.94f else 1f),
+                    columns = GridCells.Fixed(2),
 //                contentPadding = PaddingValues(bottom = 50.dp/*vertical = 4.dp*/),
-                content = {
-                    header {
-                        ChipsRow()
-                    }
-                    items(movieState.list.size) { index ->
-                        MovieCard(movie = movieState.list[index], navHostController)
-                        if (index == movieState.list.size - 1) {
-                            viewModel.onEvent(MovieListUiEvent.Paginate)
+                    content = {
+                        header {
+                            ChipsRow()
+                        }
+                        items(movieState.list.size) { index ->
+                            MovieCard(movie = movieState.list[index], navHostController)
+                            if (index == movieState.list.size - 1) {
+                                viewModel.onEvent(MovieListUiEvent.Paginate)
+                            }
                         }
                     }
+                )
+
+                if (movieState.isLoading) {
+                    CircularProgressIndicator()
                 }
-            )
-            if (movieState.isLoading) {
-                CircularProgressIndicator()
+            }
+        }
+
+        FloatingActionButton(
+            onClick = { isFabClicked = true },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 16.dp)
+            ) {
+            Icon(imageVector = Icons.Filled.ArrowUpward, contentDescription = null)
+        }
+
+        LaunchedEffect(isFabClicked) {
+            if (isFabClicked) {
+                gridState.scrollToItem(0)
+                isFabClicked = false
             }
         }
     }
+
 }
 
 fun LazyGridScope.header(

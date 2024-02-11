@@ -120,6 +120,8 @@ fun DetailsScreen(bacStackEntry: NavBackStackEntry, navController: NavHostContro
         
         CrewRow(crewState)
 
+        Spacer(modifier = Modifier.padding(top = 16.dp))
+
     }
 }
 
@@ -281,7 +283,7 @@ fun CastCard(actor: Cast, navController: NavController) {
                 .fillMaxSize()
                 .aspectRatio(500 / 750f)
                 .clickable {
-                           navController.navigate(Screen.PersonDetails.route + "/" + actor.id)
+                    navController.navigate(Screen.PersonDetails.route + "/" + actor.id)
                 },
             contentAlignment = Alignment.BottomStart
         ) {

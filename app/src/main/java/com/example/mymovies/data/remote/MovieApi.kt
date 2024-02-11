@@ -30,6 +30,13 @@ interface MovieApi {
         @Query("api_key") apiKey: String = API_KEY
     ): MovieListDto
 
+    @GET("movie/top_rated")
+    suspend fun getTopRatedMovies(
+        @Query("page") page: Int,
+        @Query("language") language: String = "en-US",
+        @Query("api_key") apiKey: String = API_KEY
+    ): MovieListDto
+
     @GET("movie/{movie_id}")
     suspend fun getMovieDetails(
         @Path("movie_id") movieId: Int,
