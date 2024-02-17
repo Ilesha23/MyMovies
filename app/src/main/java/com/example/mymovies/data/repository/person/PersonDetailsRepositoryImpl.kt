@@ -22,7 +22,13 @@ class PersonDetailsRepositoryImpl @Inject constructor(
             try {
                 val detailsDto = movieApi.getPersonDetails(id, Locale.getDefault().toLanguageTag())
                 val details = detailsDto.toPersonDetails()
-                emit(Resource.Success(details))
+                if (details.biography.isBlank()) {
+                    val bio = movieApi.getPersonDetails(id).biography
+                    val detailsWithBio = details.copy(biography = "(no info provided for your language) $bio")
+                    emit(Resource.Success(detailsWithBio))
+                } else {
+                    emit(Resource.Success(details))
+                }
                 emit(Resource.Loading(false))
                 return@flow
             } catch (e: IOException) {
