@@ -80,7 +80,6 @@ fun PopularMovieScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Surface {
-            // TODO: maybe make smt scrollable
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -120,7 +119,7 @@ fun PopularMovieScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 16.dp, bottom = 16.dp)
-            ) {
+        ) {
             Icon(imageVector = Icons.Filled.ArrowUpward, contentDescription = null)
         }
 
@@ -159,7 +158,7 @@ fun ChipsRow() {
         )
 
         Spacer(modifier = Modifier.padding(horizontal = 4.dp)) // TODO: maybe make smt as extension (or span)
-        
+
         FilterChip(
             selected = viewState.upcomingFilter,
             onClick = { viewModel.clickUpcomingFilter() },
@@ -243,15 +242,15 @@ fun MovieCard(
             )
             runCatching {
                 val sdf = SimpleDateFormat("yyyy-MM-dd")
-                val dateFromString: Date = sdf.parse(movie.release_date)
+                val dateFromString: Date? = sdf.parse(movie.release_date)
                 val today = Date()
-                if (dateFromString.before(today) || dateFromString == today) {
+                if (dateFromString?.before(today) == true || dateFromString == today) {
                     Text(
                         modifier = Modifier
                             .padding(vertical = 4.dp),
                         text = ((movie.vote_average * 10).roundToInt().toDouble() / 10).toString(),
                         color =
-                        if (movie.vote_average > 7)
+                        if (movie.vote_average >= 7)
                             Color.Green
                         else if (movie.vote_average < 4)
                             Color.Red

@@ -84,14 +84,6 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     },
-//                    floatingActionButton = {
-//                        FloatingActionButton(
-//                            onClick = {  },
-//                            elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
-//                        ) {
-//                            Icon(imageVector = Icons.Rounded.ArrowUpward, contentDescription = null)
-//                        }
-//                    }
                 ) { padding ->
                     Box(modifier = Modifier.padding(padding)) {
                         MainScreen(modifier = Modifier)
@@ -101,25 +93,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-//    @Preview(
-//        name = "Dark",
-//        widthDp = 320,
-//        heightDp = 400,
-//        showBackground = true,
-//        uiMode = Configuration.UI_MODE_NIGHT_YES
-//    )
-//    @Preview(
-//        name = "Light",
-//        widthDp = 320,
-//        heightDp = 400,
-//        showBackground = true,
-//        uiMode = Configuration.UI_MODE_NIGHT_NO
-//    )
-//    @Composable
-//    fun MainScreenPreview() {
-//        MainScreen(modifier = Modifier)
-//    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -164,9 +137,6 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(
                         Screen.Profile.route,
-//                        arguments = listOf(
-//
-//                        )
                     ) { backStackEntry ->
                         ProfileScreen(backStackEntry)
                     }
