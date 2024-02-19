@@ -1,4 +1,4 @@
-package com.example.mymovies.ui.details
+package com.example.mymovies.ui.movie_details
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image

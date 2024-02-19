@@ -1,11 +1,13 @@
-package com.example.mymovies.ui.details
+package com.example.mymovies.ui.movie_details
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mymovies.data.repository.movie_credits.MovieCreditsRepositoryImpl
-import com.example.mymovies.data.repository.movie_details.MovieDetailsRepositoryImpl
-import com.example.mymovies.data.repository.movie_images.MovieImagesRepositoryImpl
+import com.example.mymovies.domain.usecases.movie_credits.GetMovieCastUseCase
+import com.example.mymovies.domain.usecases.movie_credits.GetMovieCrewUseCase
+import com.example.mymovies.domain.usecases.movie_details.GetMovieDetailsUseCase
+import com.example.mymovies.domain.usecases.movie_images.GetMovieImagesUseCase
 import com.example.mymovies.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,9 +21,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
-    private val movieDetailsRepositoryImpl: MovieDetailsRepositoryImpl,
-    private val movieImagesRepositoryImpl: MovieImagesRepositoryImpl,
-    private val movieCreditsRepositoryImpl: MovieCreditsRepositoryImpl,
+    private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
+    private val getMovieImagesUseCase: GetMovieImagesUseCase,
+    private val getMovieCastUseCase: GetMovieCastUseCase,
+    private val getMovieCrewUseCase: GetMovieCrewUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -56,7 +59,7 @@ class DetailsViewModel @Inject constructor(
                 )
             }
 
-            movieDetailsRepositoryImpl.getDetails(movieId)
+            getMovieDetailsUseCase(movieId)
                 .collectLatest {
                     when (it) {
                         is Resource.Success -> {
@@ -110,7 +113,7 @@ class DetailsViewModel @Inject constructor(
                 )
             }
 
-            movieImagesRepositoryImpl.getMovieImages(movieId)
+            getMovieImagesUseCase(movieId)
                 .collectLatest {
                     when (it) {
                         is Resource.Success -> {
@@ -157,7 +160,7 @@ class DetailsViewModel @Inject constructor(
                 )
             }
 
-            movieCreditsRepositoryImpl.getCast(movieId)
+            getMovieCastUseCase(movieId)
                 .collectLatest { resource ->
                     when (resource) {
                         is Resource.Success -> {
@@ -201,7 +204,7 @@ class DetailsViewModel @Inject constructor(
                 )
             }
 
-            movieCreditsRepositoryImpl.getCrew(movieId)
+            getMovieCrewUseCase(movieId)
                 .collectLatest { resource ->
                     when (resource) {
                         is Resource.Success -> {

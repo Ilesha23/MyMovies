@@ -3,7 +3,9 @@ package com.example.mymovies.ui.movies
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mymovies.R
-import com.example.mymovies.data.repository.movie_list.MovieListRepository
+import com.example.mymovies.domain.usecases.movie_list.GetPopularMovieListUseCase
+import com.example.mymovies.domain.usecases.movie_list.GetTopRatedMovieListUseCase
+import com.example.mymovies.domain.usecases.movie_list.GetUpcomingMovieListUseCase
 import com.example.mymovies.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(
-    private val movieListRepository: MovieListRepository
+    private val getPopularMovieListUseCase: GetPopularMovieListUseCase,
+    private val getUpcomingMovieListUseCase: GetUpcomingMovieListUseCase,
+    private val getTopRatedMovieListUseCase: GetTopRatedMovieListUseCase,
 ) : ViewModel() {
 
     private val _movieListState = MutableStateFlow(MovieListState())
@@ -25,20 +29,20 @@ class MovieViewModel @Inject constructor(
     val movieViewState = _movieViewState.asStateFlow()
 
     init {
-        getMovieList(true, true) // TODO:
+        getMovieList(true) // TODO:
     }
 
     fun onEvent(event: MovieListUiEvent) {
         when (event) {
             MovieListUiEvent.Paginate -> {
-                if (_movieViewState.value.popularFilter) getMovieList(true, true)
+                if (_movieViewState.value.popularFilter) getMovieList(true)
                 if (_movieViewState.value.upcomingFilter) getUpcomingMovies(true)
                 if (_movieViewState.value.topRatedFilter) getTopRatedMovies(true)
             }
         }
     }
 
-    private fun getMovieList(forceFetchFromRemote: Boolean, shouldAddToList: Boolean) {
+    private fun getMovieList(shouldAddToList: Boolean) {
         if (_movieListState.value.isLoading)
             return
         viewModelScope.launch {
@@ -46,8 +50,7 @@ class MovieViewModel @Inject constructor(
                 it.copy(isLoading = true)
             }
 
-            movieListRepository.getMoviesList(
-                forceFetchFromRemote,
+            getPopularMovieListUseCase(
                 _movieListState.value.page
             ).collectLatest { result ->
                 when (result) {
@@ -69,18 +72,16 @@ class MovieViewModel @Inject constructor(
                     is Resource.Error -> {
                         _movieListState.update {
                             it.copy(
-//                                isLoading = false,
+                                isLoading = false,
                                 error = R.string.no_internet
                             )
                         }
-//                        delay(3000)
-//                        getMovieList(true) // TODO: just repeat few times
                     }
 
                     is Resource.Loading -> {
                         _movieListState.update {
                             it.copy(
-                                isLoading = /*true,*/result.isLoading,
+                                isLoading = true,
                                 error = null
                             )
                         }
@@ -99,7 +100,7 @@ class MovieViewModel @Inject constructor(
                 it.copy(isLoading = true)
             }
 
-            movieListRepository.getUpcomingMovies(
+            getUpcomingMovieListUseCase(
                 _movieListState.value.page
             ).collectLatest { result ->
                 when (result) {
@@ -121,7 +122,7 @@ class MovieViewModel @Inject constructor(
                     is Resource.Error -> {
                         _movieListState.update {
                             it.copy(
-//                                isLoading = false,
+                                isLoading = false,
                                 error = R.string.no_internet
                             )
                         }
@@ -130,7 +131,7 @@ class MovieViewModel @Inject constructor(
                     is Resource.Loading -> {
                         _movieListState.update {
                             it.copy(
-                                isLoading = /*true,*/result.isLoading,
+                                isLoading = true,
                                 error = null
                             )
                         }
@@ -149,7 +150,7 @@ class MovieViewModel @Inject constructor(
                 it.copy(isLoading = true)
             }
 
-            movieListRepository.getTopRatedMovies(
+            getTopRatedMovieListUseCase(
                 _movieListState.value.page
             ).collectLatest { result ->
                 when (result) {
@@ -171,7 +172,7 @@ class MovieViewModel @Inject constructor(
                     is Resource.Error -> {
                         _movieListState.update {
                             it.copy(
-//                                isLoading = false,
+                                isLoading = false,
                                 error = R.string.no_internet
                             )
                         }
@@ -180,7 +181,7 @@ class MovieViewModel @Inject constructor(
                     is Resource.Loading -> {
                         _movieListState.update {
                             it.copy(
-                                isLoading = /*true,*/result.isLoading,
+                                isLoading = true,
                                 error = null
                             )
                         }
@@ -193,7 +194,7 @@ class MovieViewModel @Inject constructor(
     fun clickPopularFilter() {
         if (!_movieViewState.value.popularFilter) _movieListState.update { it.copy(page = 1) } else return
         _movieViewState.update { it.copy(popularFilter = true, upcomingFilter = false, topRatedFilter = false) }
-        getMovieList(true, false)
+        getMovieList(false)
     }
 
     fun clickUpcomingFilter() {

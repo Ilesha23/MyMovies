@@ -1,4 +1,4 @@
-package com.example.mymovies.ui.details
+package com.example.mymovies.ui.movie_details
 
 import com.example.mymovies.domain.model.movie_credits.Cast
 

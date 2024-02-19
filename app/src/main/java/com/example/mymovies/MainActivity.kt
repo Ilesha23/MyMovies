@@ -32,8 +32,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.mymovies.ui.LoginScreen
 import com.example.mymovies.ui.ProfileScreen
-import com.example.mymovies.ui.details.DetailsScreen
-import com.example.mymovies.ui.details.PosterScreen
+import com.example.mymovies.ui.movie_details.DetailsScreen
+import com.example.mymovies.ui.movie_details.PosterScreen
 import com.example.mymovies.ui.movies.PopularMovieScreen
 import com.example.mymovies.ui.person_details.PersonDetailsScreen
 import com.example.mymovies.ui.theme.MyMoviesTheme

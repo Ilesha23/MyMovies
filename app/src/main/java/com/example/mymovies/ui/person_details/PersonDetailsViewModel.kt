@@ -3,8 +3,7 @@ package com.example.mymovies.ui.person_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mymovies.data.repository.person.PersonDetailsRepository
-import com.example.mymovies.ui.details.DetailsState
+import com.example.mymovies.domain.usecases.person.GetPersonDetailsUseCase
 import com.example.mymovies.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PersonDetailsViewModel @Inject constructor(
-    private val personDetailsRepository: PersonDetailsRepository,
+    private val getPersonDetailsUseCase: GetPersonDetailsUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val personId = savedStateHandle.get<Int>("personId")
@@ -38,7 +37,7 @@ class PersonDetailsViewModel @Inject constructor(
                 )
             }
 
-            personDetailsRepository.getPersonDetails(id)
+            getPersonDetailsUseCase(id)
                 .collectLatest { resource ->
                     when (resource) {
                         is Resource.Success -> {

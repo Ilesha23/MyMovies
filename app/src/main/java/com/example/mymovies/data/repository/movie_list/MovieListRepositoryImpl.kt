@@ -17,33 +17,17 @@ class MovieListRepositoryImpl @Inject constructor(
     private val movieApi: MovieApi,
     private val movieDb: MovieDatabase
 ) : MovieListRepository {
-    override suspend fun getMoviesList(
-        forceFetchFromRemote: Boolean, // todo: remove (maybe)
+    override suspend fun getPopularMovieList(
         page: Int
     ): Flow<Resource<List<Movie>>> {
         return flow {
             emit(Resource.Loading(true))
-//            val localMovieList = movieDb.movieDao.getMoviesList() // TODO: maybe always make api calls
-//            val shouldLoadLocalMoviesList = localMovieList.isNotEmpty() && !forceFetchFromRemote
-//            if (shouldLoadLocalMoviesList) {
-//                emit(Resource.Success(
-//                    data = localMovieList.map { it.toMovie() }
-//                ))
-//                emit(Resource.Loading(false))
-//                return@flow
-//            }
 
             val remoteMovieList = try {
                 movieApi.getPopularMovieList(page = page, language = Locale.getDefault().toLanguageTag())
             } catch (e: IOException) {
                 e.printStackTrace()
-                emit(Resource.Error(message = e.message)) // TODO:
-//                val localMovieList = movieDb.movieDao.getMoviesList()
-//                if (localMovieList.isNotEmpty()) {
-//                    emit(Resource.Success(
-//                        data = localMovieList.map { it.toMovie() }
-//                    ))
-//                }
+                emit(Resource.Error(message = e.message))
                 emit(Resource.Loading(false))
                 return@flow
             } catch (e: HttpException) {
@@ -56,7 +40,6 @@ class MovieListRepositoryImpl @Inject constructor(
                 return@flow
             }
             val movieEntityList = remoteMovieList.movies.map { it.toMovieEntity() } // TODO: remove
-//            movieDb.movieDao.upsertMovieList(movieEntityList)
             emit(Resource.Success(
                 movieEntityList.map {
                     it.toMovie()
