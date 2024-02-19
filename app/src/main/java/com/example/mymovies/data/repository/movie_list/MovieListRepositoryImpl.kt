@@ -34,7 +34,7 @@ class MovieListRepositoryImpl @Inject constructor(
 //            }
 
             val remoteMovieList = try {
-                movieApi.getMovieList(page = page, language = Locale.getDefault().toLanguageTag())
+                movieApi.getPopularMovieList(page = page, language = Locale.getDefault().toLanguageTag())
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error(message = e.message)) // TODO:

@@ -5,7 +5,6 @@ import com.example.mymovies.data.remote.response.movie_credits.MovieCreditsDto
 import com.example.mymovies.data.remote.response.movie_details.MovieDetailsDto
 import com.example.mymovies.data.remote.response.movie_images.MovieImagesDto
 import com.example.mymovies.data.remote.response.person_details.PersonDetailsDto
-import com.example.mymovies.domain.model.movie_images.MovieImages
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -15,7 +14,7 @@ interface MovieApi {
 
 
     @GET("movie/popular")
-    suspend fun getMovieList(
+    suspend fun getPopularMovieList(
         @Query("page") page: Int,
         @Query("language") language: String = "en-US",
         @Query("api_key") apiKey: String = API_KEY
