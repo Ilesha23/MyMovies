@@ -1,4 +1,4 @@
-package com.example.mymovies.ui.movies
+package com.example.mymovies.ui.movie_lists
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -69,7 +69,7 @@ import kotlin.math.roundToInt
 fun PopularMovieScreen(
     navHostController: NavHostController
 ) {
-    val viewModel = hiltViewModel<MovieViewModel>()
+    val viewModel = hiltViewModel<MovieListsViewModel>()
     val movieState = viewModel.movieListState.collectAsState().value
     val gridState = rememberLazyGridState()
     var isFabClicked by remember { mutableStateOf(false) }
@@ -142,7 +142,7 @@ fun LazyGridScope.header(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChipsRow() {
-    val viewModel = hiltViewModel<MovieViewModel>()
+    val viewModel = hiltViewModel<MovieListsViewModel>()
     val viewState = viewModel.movieViewState.collectAsState().value
 
     Row(

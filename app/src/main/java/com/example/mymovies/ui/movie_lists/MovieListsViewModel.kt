@@ -1,4 +1,4 @@
-package com.example.mymovies.ui.movies
+package com.example.mymovies.ui.movie_lists
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MovieViewModel @Inject constructor(
+class MovieListsViewModel @Inject constructor(
     private val getPopularMovieListUseCase: GetPopularMovieListUseCase,
     private val getUpcomingMovieListUseCase: GetUpcomingMovieListUseCase,
     private val getTopRatedMovieListUseCase: GetTopRatedMovieListUseCase,
@@ -29,20 +29,20 @@ class MovieViewModel @Inject constructor(
     val movieViewState = _movieViewState.asStateFlow()
 
     init {
-        getMovieList(true) // TODO:
+        getPopularMovieList(true)
     }
 
     fun onEvent(event: MovieListUiEvent) {
         when (event) {
             MovieListUiEvent.Paginate -> {
-                if (_movieViewState.value.popularFilter) getMovieList(true)
+                if (_movieViewState.value.popularFilter) getPopularMovieList(true)
                 if (_movieViewState.value.upcomingFilter) getUpcomingMovies(true)
                 if (_movieViewState.value.topRatedFilter) getTopRatedMovies(true)
             }
         }
     }
 
-    private fun getMovieList(shouldAddToList: Boolean) {
+    private fun getPopularMovieList(shouldAddToList: Boolean) {
         if (_movieListState.value.isLoading)
             return
         viewModelScope.launch {
@@ -81,7 +81,7 @@ class MovieViewModel @Inject constructor(
                     is Resource.Loading -> {
                         _movieListState.update {
                             it.copy(
-                                isLoading = true,
+                                isLoading = result.isLoading,
                                 error = null
                             )
                         }
@@ -131,7 +131,7 @@ class MovieViewModel @Inject constructor(
                     is Resource.Loading -> {
                         _movieListState.update {
                             it.copy(
-                                isLoading = true,
+                                isLoading = result.isLoading,
                                 error = null
                             )
                         }
@@ -181,7 +181,7 @@ class MovieViewModel @Inject constructor(
                     is Resource.Loading -> {
                         _movieListState.update {
                             it.copy(
-                                isLoading = true,
+                                isLoading = result.isLoading,
                                 error = null
                             )
                         }
@@ -194,7 +194,7 @@ class MovieViewModel @Inject constructor(
     fun clickPopularFilter() {
         if (!_movieViewState.value.popularFilter) _movieListState.update { it.copy(page = 1) } else return
         _movieViewState.update { it.copy(popularFilter = true, upcomingFilter = false, topRatedFilter = false) }
-        getMovieList(false)
+        getPopularMovieList(false)
     }
 
     fun clickUpcomingFilter() {
