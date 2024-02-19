@@ -18,20 +18,20 @@ import com.example.mymovies.domain.model.movie_details.SpokenLanguage
 
 fun MovieDto.toMovieEntity() = MovieEntity(
     adult = adult ?: false,
-    backdrop_path = backdrop_path ?: "",
+    backdrop_path = backdrop_path.orEmpty(),
     genre_ids = try {
         genre_ids?.joinToString(",")
     } catch (e: Exception) {
         "-1,-2"
     } ?: "-1,-2",
     id = id ?: -1,
-    original_language = original_language ?: "",
-    original_title = original_title ?: "",
-    overview = overview ?: "",
+    original_language = original_language.orEmpty(),
+    original_title = original_title.orEmpty(),
+    overview = overview.orEmpty(),
     popularity = popularity ?: 0.0,
-    poster_path = poster_path ?: "",
-    release_date = release_date ?: "",
-    title = title ?: "",
+    poster_path = poster_path.orEmpty(),
+    release_date = release_date.orEmpty(),
+    title = title.orEmpty(),
     video = video ?: false,
     vote_average = vote_average ?: 0.0,
     vote_count = vote_count ?: 0

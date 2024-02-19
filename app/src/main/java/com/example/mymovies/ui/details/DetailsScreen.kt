@@ -182,7 +182,7 @@ fun Info(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = detailsState.details?.title ?: "", textAlign = TextAlign.Center)
+            Text(text = detailsState.details?.title.orEmpty(), textAlign = TextAlign.Center)
             Row {
 
                 Column(
@@ -205,7 +205,7 @@ fun Info(
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = detailsState.details?.release_date ?: "")
+                    Text(text = detailsState.details?.release_date.orEmpty())
                     Text(
                         text = (viewModel.convertCurrencyToString(
                             detailsState.details?.budget ?: 0
@@ -235,13 +235,13 @@ fun Overview(detailsState: DetailsState) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = detailsState.details?.tagline ?: "",
+            text = detailsState.details?.tagline.orEmpty(),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.padding(top = 8.dp))
         Text(
-            text = detailsState.details?.overview ?: "",
+            text = detailsState.details?.overview.orEmpty(),
             maxLines = if (expanded) Int.MAX_VALUE else 3,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier

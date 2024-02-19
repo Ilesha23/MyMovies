@@ -19,7 +19,7 @@ fun PersonDetailsScreen(backStackEntry: NavBackStackEntry, navController: NavHos
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Text(text = detailsState.details?.biography ?: "")
+        Text(text = detailsState.details?.biography.orEmpty())
     }
 
 }

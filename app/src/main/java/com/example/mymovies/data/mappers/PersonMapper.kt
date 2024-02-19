@@ -6,16 +6,16 @@ import com.example.mymovies.domain.model.person_details.PersonDetails
 fun PersonDetailsDto.toPersonDetails() = PersonDetails(
     adult = adult ?: false,
     also_known_as = also_known_as ?: emptyList(),
-    biography = biography ?: "",
-    birthday = birthday ?: "",
-    deathday = deathday ?: "",
+    biography = biography.orEmpty(),
+    birthday = birthday.orEmpty(),
+    deathday = deathday.orEmpty(),
     gender = gender ?: 0,
-    homepage = homepage ?: "",
+    homepage = homepage.orEmpty(),
     id = id ?: -1,
-    imdb_id = imdb_id ?: "",
-    name = name ?: "",
-    place_of_birth = place_of_birth ?: "",
+    imdb_id = imdb_id.orEmpty(),
+    name = name.orEmpty(),
+    place_of_birth = place_of_birth.orEmpty(),
     popularity = popularity ?: 0.0,
-    profile_path = profile_path ?: "",
-    known_for_department = known_for_department ?: ""
+    profile_path = profile_path.orEmpty(),
+    known_for_department = known_for_department.orEmpty()
 )

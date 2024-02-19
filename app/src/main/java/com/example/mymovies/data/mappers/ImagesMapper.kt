@@ -18,9 +18,9 @@ fun MovieImagesDto.toMovieImages() = MovieImages(
 
 fun BackdropDto.toBackDrop() = Backdrop(
     aspect_ratio ?: 0.0,
-    file_path ?: "",
+    file_path.orEmpty(),
     height ?: 0,
-    iso_639_1 ?: "",
+    iso_639_1.orEmpty(),
     vote_average ?: 0.0,
     vote_count ?: 0,
     width ?: 0
@@ -28,9 +28,9 @@ fun BackdropDto.toBackDrop() = Backdrop(
 
 fun LogoDto.toLogo() = Logo(
     aspect_ratio ?: 0.0,
-    file_path ?: "",
+    file_path.orEmpty(),
     height ?: 0,
-    iso_639_1 ?: "",
+    iso_639_1.orEmpty(),
     vote_average ?: 0.0,
     vote_count ?: 0,
     width ?:0
@@ -38,9 +38,9 @@ fun LogoDto.toLogo() = Logo(
 
 fun PosterDto.toPoster() = Poster(
     aspect_ratio ?: 0.0,
-    file_path ?: "",
+    file_path.orEmpty(),
     height ?: 0,
-    iso_639_1 ?: "",
+    iso_639_1.orEmpty(),
     vote_average ?: 0.0,
     vote_count ?: 0,
     width ?:0

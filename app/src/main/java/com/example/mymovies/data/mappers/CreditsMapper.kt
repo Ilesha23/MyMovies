@@ -16,28 +16,28 @@ fun MovieCreditsDto.toMovieCredits() = MovieCredits(
 fun CastDto.toCast() = Cast(
     adult ?: false,
     cast_id ?: -1,
-    character ?: "",
-    credit_id ?: "",
+    character.orEmpty(),
+    credit_id.orEmpty(),
     gender ?: 1,
     id ?: -1,
-    known_for_department ?: "",
-    name ?: "",
+    known_for_department.orEmpty(),
+    name.orEmpty(),
     order ?: -1,
-    original_name ?: "",
+    original_name.orEmpty(),
     popularity ?: 0.0,
-    profile_path ?: ""
+    profile_path.orEmpty()
 )
 
 fun CrewDto.toCrew() = Crew(
     adult ?: false,
-    credit_id ?: "",
-    department ?: "",
+    credit_id.orEmpty(),
+    department.orEmpty(),
     gender ?: 1,
     id ?: -1,
-    job ?: "",
-    known_for_department ?: "",
-    name ?: "",
-    original_name ?: "",
+    job.orEmpty(),
+    known_for_department.orEmpty(),
+    name.orEmpty(),
+    original_name.orEmpty(),
     popularity ?: 0.0,
-    profile_path ?: ""
+    profile_path.orEmpty()
 )
