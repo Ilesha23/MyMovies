@@ -1,4 +1,4 @@
-package com.example.mymovies.ui.movie_details
+package com.example.mymovies.ui.movie_details.state
 
 import com.example.mymovies.domain.model.movie_credits.Crew
 

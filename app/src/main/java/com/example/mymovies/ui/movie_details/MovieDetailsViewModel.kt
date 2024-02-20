@@ -3,11 +3,14 @@ package com.example.mymovies.ui.movie_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mymovies.data.repository.movie_credits.MovieCreditsRepositoryImpl
 import com.example.mymovies.domain.usecases.movie_credits.GetMovieCastUseCase
 import com.example.mymovies.domain.usecases.movie_credits.GetMovieCrewUseCase
 import com.example.mymovies.domain.usecases.movie_details.GetMovieDetailsUseCase
 import com.example.mymovies.domain.usecases.movie_images.GetMovieImagesUseCase
+import com.example.mymovies.ui.movie_details.state.CastState
+import com.example.mymovies.ui.movie_details.state.CrewState
+import com.example.mymovies.ui.movie_details.state.DetailsState
+import com.example.mymovies.ui.movie_details.state.ImagesState
 import com.example.mymovies.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +23,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailsViewModel @Inject constructor(
+class MovieDetailsViewModel @Inject constructor(
     private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
     private val getMovieImagesUseCase: GetMovieImagesUseCase,
     private val getMovieCastUseCase: GetMovieCastUseCase,

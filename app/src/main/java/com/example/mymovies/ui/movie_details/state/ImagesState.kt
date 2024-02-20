@@ -1,4 +1,4 @@
-package com.example.mymovies.ui.movie_details
+package com.example.mymovies.ui.movie_details.state
 
 data class ImagesState(
     val isLoading: Boolean = false,

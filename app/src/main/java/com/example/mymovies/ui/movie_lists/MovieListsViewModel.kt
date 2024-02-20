@@ -6,6 +6,8 @@ import com.example.mymovies.R
 import com.example.mymovies.domain.usecases.movie_list.GetPopularMovieListUseCase
 import com.example.mymovies.domain.usecases.movie_list.GetTopRatedMovieListUseCase
 import com.example.mymovies.domain.usecases.movie_list.GetUpcomingMovieListUseCase
+import com.example.mymovies.ui.movie_lists.state.MovieListState
+import com.example.mymovies.ui.movie_lists.state.MovieListViewState
 import com.example.mymovies.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

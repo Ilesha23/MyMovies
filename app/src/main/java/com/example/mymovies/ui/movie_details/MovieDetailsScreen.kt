@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ImageNotSupported
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -62,13 +63,17 @@ import com.example.mymovies.R
 import com.example.mymovies.data.remote.MovieApi
 import com.example.mymovies.domain.model.movie_credits.Cast
 import com.example.mymovies.domain.model.movie_credits.Crew
+import com.example.mymovies.ui.movie_details.state.CastState
+import com.example.mymovies.ui.movie_details.state.CrewState
+import com.example.mymovies.ui.movie_details.state.DetailsState
+import com.example.mymovies.ui.movie_details.state.ImagesState
 import com.example.mymovies.util.Screen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun DetailsScreen(navController: NavHostController) {
-    val viewModel = hiltViewModel<DetailsViewModel>()
+    val viewModel = hiltViewModel<MovieDetailsViewModel>()
     val detailsState = viewModel.detailsState.collectAsState().value
     val castState = viewModel.castState.collectAsState().value
     val crewState = viewModel.crewState.collectAsState().value
@@ -120,7 +125,9 @@ fun DetailsScreen(navController: NavHostController) {
             style = MaterialTheme.typography.titleMedium
         )
 
-        CrewRow(crewState)
+        CrewRow(crewState) { crewId ->
+            navController.navigate(Screen.PersonDetails.route + "/" + crewId)
+        }
 
         Spacer(modifier = Modifier.padding(top = 16.dp))
 
@@ -139,7 +146,7 @@ fun BackDrop(backdropsState: ImagesState) {
 
 @Composable
 fun Info(
-    viewModel: DetailsViewModel,
+    viewModel: MovieDetailsViewModel,
     detailsState: DetailsState,
     onClick: (String?) -> Unit
 ) {
@@ -308,7 +315,7 @@ fun CastCard(
                 )
             } else {
                 Image(
-                    imageVector = Icons.Rounded.ImageNotSupported,
+                    imageVector = Icons.Rounded.Person,
                     contentDescription = null,
                     contentScale = ContentScale.FillWidth,
                     modifier = Modifier
@@ -347,7 +354,10 @@ fun CastCard(
 }
 
 @Composable
-fun CrewRow(crewState: CrewState) {
+fun CrewRow(
+    crewState: CrewState,
+    onClick: (Int) -> Unit
+) {
     val crew = crewState.crew
 
     LazyRow(
@@ -357,13 +367,18 @@ fun CrewRow(crewState: CrewState) {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(crew) {
-            CrewCard(person = it)
+            CrewCard(person = it) { personId ->
+                onClick(personId)
+            }
         }
     }
 }
 
 @Composable
-fun CrewCard(person: Crew) {
+fun CrewCard(
+    person: Crew,
+    onClick: (Int) -> Unit
+) {
     val posterState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(MovieApi.IMAGE_BASE_URL + person.profile_path)
@@ -376,7 +391,9 @@ fun CrewCard(person: Crew) {
             modifier = Modifier
                 .fillMaxSize()
                 .aspectRatio(500 / 750f)
-                .clickable { },
+                .clickable {
+                    onClick(person.id)
+                },
             contentAlignment = Alignment.BottomStart
         ) {
             if (posterState is AsyncImagePainter.State.Success) {
@@ -387,7 +404,7 @@ fun CrewCard(person: Crew) {
                 )
             } else {
                 Image(
-                    imageVector = Icons.Rounded.ImageNotSupported,
+                    imageVector = Icons.Rounded.Person,
                     contentDescription = null,
                     contentScale = ContentScale.FillWidth,
                     modifier = Modifier

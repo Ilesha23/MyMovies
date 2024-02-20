@@ -1,4 +1,4 @@
-package com.example.mymovies.ui.movie_lists
+package com.example.mymovies.ui.movie_lists.state
 
 import com.example.mymovies.domain.model.movie.Movie
 
