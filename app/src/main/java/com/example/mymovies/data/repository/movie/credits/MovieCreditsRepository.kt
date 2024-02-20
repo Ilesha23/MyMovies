@@ -1,4 +1,4 @@
-package com.example.mymovies.data.repository.movie_credits
+package com.example.mymovies.data.repository.movie.credits
 
 import com.example.mymovies.domain.model.movie_credits.Cast
 import com.example.mymovies.domain.model.movie_credits.Crew

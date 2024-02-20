@@ -1,8 +1,8 @@
-package com.example.mymovies.data.repository.movie_details
+package com.example.mymovies.data.repository.person.details
 
-import com.example.mymovies.data.mappers.toMovieDetails
+import com.example.mymovies.data.mappers.toPersonDetails
 import com.example.mymovies.data.remote.MovieApi
-import com.example.mymovies.domain.model.movie_details.MovieDetails
+import com.example.mymovies.domain.model.person_details.PersonDetails
 import com.example.mymovies.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -11,18 +11,24 @@ import java.io.IOException
 import java.util.Locale
 import javax.inject.Inject
 
-class MovieDetailsRepositoryImpl @Inject constructor(
+class PersonDetailsRepositoryImpl @Inject constructor(
     private val movieApi: MovieApi
-) : MovieDetailsRepository {
+) : PersonDetailsRepository {
 
-    override suspend fun getDetails(id: Int): Flow<Resource<MovieDetails>> {
+    override suspend fun getPersonDetails(id: Int): Flow<Resource<PersonDetails>> {
         return flow {
             emit(Resource.Loading(true))
 
             try {
-                val remoteDetails = movieApi.getMovieDetails(id, Locale.getDefault().toLanguageTag())
-                val movieDetails = remoteDetails.toMovieDetails()
-                emit(Resource.Success(movieDetails))
+                val detailsDto = movieApi.getPersonDetails(id, Locale.getDefault().toLanguageTag())
+                val details = detailsDto.toPersonDetails()
+                if (details.biography.isBlank()) {
+                    val bio = movieApi.getPersonDetails(id).biography
+                    val detailsWithBio = details.copy(biography = "(no info provided for your language) $bio")
+                    emit(Resource.Success(detailsWithBio))
+                } else {
+                    emit(Resource.Success(details))
+                }
                 emit(Resource.Loading(false))
                 return@flow
             } catch (e: IOException) {
@@ -41,7 +47,6 @@ class MovieDetailsRepositoryImpl @Inject constructor(
                 emit(Resource.Loading(false))
                 return@flow
             }
-
         }
     }
 

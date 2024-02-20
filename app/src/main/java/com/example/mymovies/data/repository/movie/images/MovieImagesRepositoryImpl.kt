@@ -1,8 +1,8 @@
-package com.example.mymovies.data.repository.person
+package com.example.mymovies.data.repository.movie.images
 
-import com.example.mymovies.data.mappers.toPersonDetails
+import com.example.mymovies.data.mappers.toMovieImages
 import com.example.mymovies.data.remote.MovieApi
-import com.example.mymovies.domain.model.person_details.PersonDetails
+import com.example.mymovies.domain.model.movie_images.MovieImages
 import com.example.mymovies.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -11,26 +11,20 @@ import java.io.IOException
 import java.util.Locale
 import javax.inject.Inject
 
-class PersonDetailsRepositoryImpl @Inject constructor(
+class MovieImagesRepositoryImpl @Inject constructor(
     private val movieApi: MovieApi
-) : PersonDetailsRepository {
+) : MovieImagesRepository {
 
-    override suspend fun getPersonDetails(id: Int): Flow<Resource<PersonDetails>> {
+    override suspend fun getMovieImages(id: Int): Flow<Resource<MovieImages>> {
         return flow {
+
             emit(Resource.Loading(true))
 
             try {
-                val detailsDto = movieApi.getPersonDetails(id, Locale.getDefault().toLanguageTag())
-                val details = detailsDto.toPersonDetails()
-                if (details.biography.isBlank()) {
-                    val bio = movieApi.getPersonDetails(id).biography
-                    val detailsWithBio = details.copy(biography = "(no info provided for your language) $bio")
-                    emit(Resource.Success(detailsWithBio))
-                } else {
-                    emit(Resource.Success(details))
-                }
-                emit(Resource.Loading(false))
-                return@flow
+                val movieImages = movieApi
+                    .getMovieImages(id, Locale.getDefault().language + ",en,null")
+                    .toMovieImages()
+                emit(Resource.Success(movieImages))
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error(e.message))

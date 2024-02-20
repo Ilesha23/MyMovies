@@ -1,8 +1,8 @@
-package com.example.mymovies.data.repository.movie_images
+package com.example.mymovies.data.repository.movie.details
 
-import com.example.mymovies.data.mappers.toMovieImages
+import com.example.mymovies.data.mappers.toMovieDetails
 import com.example.mymovies.data.remote.MovieApi
-import com.example.mymovies.domain.model.movie_images.MovieImages
+import com.example.mymovies.domain.model.movie_details.MovieDetails
 import com.example.mymovies.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -11,20 +11,20 @@ import java.io.IOException
 import java.util.Locale
 import javax.inject.Inject
 
-class MovieImagesRepositoryImpl @Inject constructor(
+class MovieDetailsRepositoryImpl @Inject constructor(
     private val movieApi: MovieApi
-) : MovieImagesRepository {
+) : MovieDetailsRepository {
 
-    override suspend fun getMovieImages(id: Int): Flow<Resource<MovieImages>> {
+    override suspend fun getDetails(id: Int): Flow<Resource<MovieDetails>> {
         return flow {
-
             emit(Resource.Loading(true))
 
             try {
-                val movieImages = movieApi
-                    .getMovieImages(id, Locale.getDefault().language + ",en,null")
-                    .toMovieImages()
-                emit(Resource.Success(movieImages))
+                val remoteDetails = movieApi.getMovieDetails(id, Locale.getDefault().toLanguageTag())
+                val movieDetails = remoteDetails.toMovieDetails()
+                emit(Resource.Success(movieDetails))
+                emit(Resource.Loading(false))
+                return@flow
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error(e.message))
@@ -41,6 +41,7 @@ class MovieImagesRepositoryImpl @Inject constructor(
                 emit(Resource.Loading(false))
                 return@flow
             }
+
         }
     }
 

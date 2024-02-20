@@ -1,4 +1,4 @@
-package com.example.mymovies.data.repository.movie_credits
+package com.example.mymovies.data.repository.movie.credits
 
 import com.example.mymovies.data.mappers.toMovieCredits
 import com.example.mymovies.data.remote.MovieApi

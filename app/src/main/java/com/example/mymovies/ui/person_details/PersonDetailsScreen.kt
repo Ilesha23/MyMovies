@@ -19,7 +19,13 @@ fun PersonDetailsScreen(backStackEntry: NavBackStackEntry, navController: NavHos
         modifier = Modifier
             .fillMaxSize()
     ) {
+        PhotosPager(photoUris = detailsState.images)
         Text(text = detailsState.details?.biography.orEmpty())
     }
 
+}
+
+@Composable
+fun PhotosPager(photoUris: List<String>) {
+    
 }

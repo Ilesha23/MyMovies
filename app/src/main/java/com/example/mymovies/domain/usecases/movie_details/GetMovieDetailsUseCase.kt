@@ -1,6 +1,6 @@
 package com.example.mymovies.domain.usecases.movie_details
 
-import com.example.mymovies.data.repository.movie_details.MovieDetailsRepositoryImpl
+import com.example.mymovies.data.repository.movie.details.MovieDetailsRepositoryImpl
 import com.example.mymovies.domain.model.movie_details.MovieDetails
 import com.example.mymovies.util.Resource
 import kotlinx.coroutines.flow.Flow
