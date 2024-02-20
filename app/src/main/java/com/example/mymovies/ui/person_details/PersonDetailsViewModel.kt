@@ -3,8 +3,8 @@ package com.example.mymovies.ui.person_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mymovies.domain.usecases.person.GetPersonDetailsUseCase
-import com.example.mymovies.domain.usecases.person_images.GetPersonImagesUseCase
+import com.example.mymovies.domain.usecases.person.details.GetPersonDetailsUseCase
+import com.example.mymovies.domain.usecases.person.images.GetPersonImagesUseCase
 import com.example.mymovies.ui.person_details.state.PersonDetailsState
 import com.example.mymovies.ui.person_details.state.PersonImagesState
 import com.example.mymovies.util.Resource

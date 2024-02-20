@@ -1,11 +1,11 @@
 package com.example.mymovies.data.remote
 
-import com.example.mymovies.data.remote.response.movie.MovieListDto
-import com.example.mymovies.data.remote.response.movie_credits.MovieCreditsDto
-import com.example.mymovies.data.remote.response.movie_details.MovieDetailsDto
-import com.example.mymovies.data.remote.response.movie_images.MovieImagesDto
-import com.example.mymovies.data.remote.response.person_details.PersonDetailsDto
-import com.example.mymovies.data.remote.response.person_images.PersonImagesDto
+import com.example.mymovies.data.remote.response.movie.movie.MovieListDto
+import com.example.mymovies.data.remote.response.movie.credits.MovieCreditsDto
+import com.example.mymovies.data.remote.response.movie.details.MovieDetailsDto
+import com.example.mymovies.data.remote.response.movie.images.MovieImagesDto
+import com.example.mymovies.data.remote.response.person.details.PersonDetailsDto
+import com.example.mymovies.data.remote.response.person.images.PersonImagesDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

@@ -58,7 +58,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.example.mymovies.R
 import com.example.mymovies.data.remote.MovieApi
-import com.example.mymovies.domain.model.movie.Movie
+import com.example.mymovies.domain.model.movie.movie.Movie
 import com.example.mymovies.util.Screen
 import java.text.SimpleDateFormat
 import java.util.Date

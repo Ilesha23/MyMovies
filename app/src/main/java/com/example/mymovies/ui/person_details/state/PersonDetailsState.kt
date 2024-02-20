@@ -1,6 +1,6 @@
 package com.example.mymovies.ui.person_details.state
 
-import com.example.mymovies.domain.model.person_details.PersonDetails
+import com.example.mymovies.domain.model.person.details.PersonDetails
 
 data class PersonDetailsState(
     val isLoading: Boolean = false,

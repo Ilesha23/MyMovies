@@ -1,11 +1,11 @@
 package com.example.mymovies.data.mappers
 
-import com.example.mymovies.data.remote.response.movie_credits.CastDto
-import com.example.mymovies.data.remote.response.movie_credits.CrewDto
-import com.example.mymovies.data.remote.response.movie_credits.MovieCreditsDto
-import com.example.mymovies.domain.model.movie_credits.Cast
-import com.example.mymovies.domain.model.movie_credits.Crew
-import com.example.mymovies.domain.model.movie_credits.MovieCredits
+import com.example.mymovies.data.remote.response.movie.credits.CastDto
+import com.example.mymovies.data.remote.response.movie.credits.CrewDto
+import com.example.mymovies.data.remote.response.movie.credits.MovieCreditsDto
+import com.example.mymovies.domain.model.movie.credits.Cast
+import com.example.mymovies.domain.model.movie.credits.Crew
+import com.example.mymovies.domain.model.movie.credits.MovieCredits
 
 fun MovieCreditsDto.toMovieCredits() = MovieCredits(
     cast?.map { it.toCast() } ?: emptyList(),

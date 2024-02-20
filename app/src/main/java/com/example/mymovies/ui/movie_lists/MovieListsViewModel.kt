@@ -3,9 +3,9 @@ package com.example.mymovies.ui.movie_lists
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mymovies.R
-import com.example.mymovies.domain.usecases.movie_list.GetPopularMovieListUseCase
-import com.example.mymovies.domain.usecases.movie_list.GetTopRatedMovieListUseCase
-import com.example.mymovies.domain.usecases.movie_list.GetUpcomingMovieListUseCase
+import com.example.mymovies.domain.usecases.movie.`\list`.GetPopularMovieListUseCase
+import com.example.mymovies.domain.usecases.movie.`\list`.GetTopRatedMovieListUseCase
+import com.example.mymovies.domain.usecases.movie.`\list`.GetUpcomingMovieListUseCase
 import com.example.mymovies.ui.movie_lists.state.MovieListState
 import com.example.mymovies.ui.movie_lists.state.MovieListViewState
 import com.example.mymovies.util.Resource

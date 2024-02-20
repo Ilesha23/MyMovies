@@ -1,20 +1,20 @@
 package com.example.mymovies.data.mappers
 
 import com.example.mymovies.data.local.movie.MovieEntity
-import com.example.mymovies.data.remote.response.movie.MovieDto
-import com.example.mymovies.data.remote.response.movie_details.BelongsToCollectionDto
-import com.example.mymovies.data.remote.response.movie_details.GenreDto
-import com.example.mymovies.data.remote.response.movie_details.MovieDetailsDto
-import com.example.mymovies.data.remote.response.movie_details.ProductionCompanyDto
-import com.example.mymovies.data.remote.response.movie_details.ProductionCountryDto
-import com.example.mymovies.data.remote.response.movie_details.SpokenLanguageDto
-import com.example.mymovies.domain.model.movie.Movie
-import com.example.mymovies.domain.model.movie_details.BelongsToCollection
-import com.example.mymovies.domain.model.movie_details.Genre
-import com.example.mymovies.domain.model.movie_details.MovieDetails
-import com.example.mymovies.domain.model.movie_details.ProductionCompany
-import com.example.mymovies.domain.model.movie_details.ProductionCountry
-import com.example.mymovies.domain.model.movie_details.SpokenLanguage
+import com.example.mymovies.data.remote.response.movie.movie.MovieDto
+import com.example.mymovies.data.remote.response.movie.details.BelongsToCollectionDto
+import com.example.mymovies.data.remote.response.movie.details.GenreDto
+import com.example.mymovies.data.remote.response.movie.details.MovieDetailsDto
+import com.example.mymovies.data.remote.response.movie.details.ProductionCompanyDto
+import com.example.mymovies.data.remote.response.movie.details.ProductionCountryDto
+import com.example.mymovies.data.remote.response.movie.details.SpokenLanguageDto
+import com.example.mymovies.domain.model.movie.movie.Movie
+import com.example.mymovies.domain.model.movie.details.BelongsToCollection
+import com.example.mymovies.domain.model.movie.details.Genre
+import com.example.mymovies.domain.model.movie.details.MovieDetails
+import com.example.mymovies.domain.model.movie.details.ProductionCompany
+import com.example.mymovies.domain.model.movie.details.ProductionCountry
+import com.example.mymovies.domain.model.movie.details.SpokenLanguage
 
 fun MovieDto.toMovieEntity() = MovieEntity(
     adult = adult ?: false,

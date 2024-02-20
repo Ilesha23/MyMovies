@@ -1,8 +1,8 @@
 package com.example.mymovies.data.mappers
 
-import com.example.mymovies.data.remote.response.person_details.PersonDetailsDto
-import com.example.mymovies.data.remote.response.person_images.PersonImagesDto
-import com.example.mymovies.domain.model.person_details.PersonDetails
+import com.example.mymovies.data.remote.response.person.details.PersonDetailsDto
+import com.example.mymovies.data.remote.response.person.images.PersonImagesDto
+import com.example.mymovies.domain.model.person.details.PersonDetails
 
 fun PersonDetailsDto.toPersonDetails() = PersonDetails(
     adult = adult ?: false,

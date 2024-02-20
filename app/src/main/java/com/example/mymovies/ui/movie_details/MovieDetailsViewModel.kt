@@ -3,10 +3,10 @@ package com.example.mymovies.ui.movie_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mymovies.domain.usecases.movie_credits.GetMovieCastUseCase
-import com.example.mymovies.domain.usecases.movie_credits.GetMovieCrewUseCase
-import com.example.mymovies.domain.usecases.movie_details.GetMovieDetailsUseCase
-import com.example.mymovies.domain.usecases.movie_images.GetMovieImagesUseCase
+import com.example.mymovies.domain.usecases.movie.credits.GetMovieCastUseCase
+import com.example.mymovies.domain.usecases.movie.credits.GetMovieCrewUseCase
+import com.example.mymovies.domain.usecases.movie.details.GetMovieDetailsUseCase
+import com.example.mymovies.domain.usecases.movie.images.GetMovieImagesUseCase
 import com.example.mymovies.ui.movie_details.state.CastState
 import com.example.mymovies.ui.movie_details.state.CrewState
 import com.example.mymovies.ui.movie_details.state.DetailsState

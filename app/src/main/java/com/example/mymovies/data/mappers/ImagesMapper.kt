@@ -1,13 +1,13 @@
 package com.example.mymovies.data.mappers
 
-import com.example.mymovies.data.remote.response.movie_images.BackdropDto
-import com.example.mymovies.data.remote.response.movie_images.LogoDto
-import com.example.mymovies.data.remote.response.movie_images.MovieImagesDto
-import com.example.mymovies.data.remote.response.movie_images.PosterDto
-import com.example.mymovies.domain.model.movie_images.Backdrop
-import com.example.mymovies.domain.model.movie_images.Logo
-import com.example.mymovies.domain.model.movie_images.MovieImages
-import com.example.mymovies.domain.model.movie_images.Poster
+import com.example.mymovies.data.remote.response.movie.images.BackdropDto
+import com.example.mymovies.data.remote.response.movie.images.LogoDto
+import com.example.mymovies.data.remote.response.movie.images.MovieImagesDto
+import com.example.mymovies.data.remote.response.movie.images.PosterDto
+import com.example.mymovies.domain.model.movie.images.Backdrop
+import com.example.mymovies.domain.model.movie.images.Logo
+import com.example.mymovies.domain.model.movie.images.MovieImages
+import com.example.mymovies.domain.model.movie.images.Poster
 
 fun MovieImagesDto.toMovieImages() = MovieImages(
     backdrops?.map { it.toBackDrop() } ?: emptyList(),

@@ -4,7 +4,7 @@ import com.example.mymovies.data.local.movie.MovieDatabase
 import com.example.mymovies.data.mappers.toMovie
 import com.example.mymovies.data.mappers.toMovieEntity
 import com.example.mymovies.data.remote.MovieApi
-import com.example.mymovies.domain.model.movie.Movie
+import com.example.mymovies.domain.model.movie.movie.Movie
 import com.example.mymovies.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

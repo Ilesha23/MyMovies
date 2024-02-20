@@ -2,7 +2,7 @@ package com.example.mymovies.data.repository.person.details
 
 import com.example.mymovies.data.mappers.toPersonDetails
 import com.example.mymovies.data.remote.MovieApi
-import com.example.mymovies.domain.model.person_details.PersonDetails
+import com.example.mymovies.domain.model.person.details.PersonDetails
 import com.example.mymovies.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

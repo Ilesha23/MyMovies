@@ -2,7 +2,7 @@ package com.example.mymovies.data.repository.movie.images
 
 import com.example.mymovies.data.mappers.toMovieImages
 import com.example.mymovies.data.remote.MovieApi
-import com.example.mymovies.domain.model.movie_images.MovieImages
+import com.example.mymovies.domain.model.movie.images.MovieImages
 import com.example.mymovies.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

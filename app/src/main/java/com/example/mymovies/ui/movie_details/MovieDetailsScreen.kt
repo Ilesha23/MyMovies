@@ -61,8 +61,8 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.example.mymovies.R
 import com.example.mymovies.data.remote.MovieApi
-import com.example.mymovies.domain.model.movie_credits.Cast
-import com.example.mymovies.domain.model.movie_credits.Crew
+import com.example.mymovies.domain.model.movie.credits.Cast
+import com.example.mymovies.domain.model.movie.credits.Crew
 import com.example.mymovies.ui.movie_details.state.CastState
 import com.example.mymovies.ui.movie_details.state.CrewState
 import com.example.mymovies.ui.movie_details.state.DetailsState
