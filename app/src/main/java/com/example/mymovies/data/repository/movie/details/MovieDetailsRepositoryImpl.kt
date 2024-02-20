@@ -4,8 +4,10 @@ import com.example.mymovies.data.mappers.toMovieDetails
 import com.example.mymovies.data.remote.MovieApi
 import com.example.mymovies.domain.model.movie.details.MovieDetails
 import com.example.mymovies.util.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.Locale
@@ -20,7 +22,9 @@ class MovieDetailsRepositoryImpl @Inject constructor(
             emit(Resource.Loading(true))
 
             try {
-                val remoteDetails = movieApi.getMovieDetails(id, Locale.getDefault().toLanguageTag())
+                val remoteDetails = withContext(Dispatchers.IO) {
+                    movieApi.getMovieDetails(id, Locale.getDefault().toLanguageTag())
+                }
                 val movieDetails = remoteDetails.toMovieDetails()
                 emit(Resource.Success(movieDetails))
                 emit(Resource.Loading(false))

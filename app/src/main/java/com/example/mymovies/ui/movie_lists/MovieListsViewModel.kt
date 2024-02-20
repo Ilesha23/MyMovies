@@ -3,9 +3,9 @@ package com.example.mymovies.ui.movie_lists
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mymovies.R
-import com.example.mymovies.domain.usecases.movie.`\list`.GetPopularMovieListUseCase
-import com.example.mymovies.domain.usecases.movie.`\list`.GetTopRatedMovieListUseCase
-import com.example.mymovies.domain.usecases.movie.`\list`.GetUpcomingMovieListUseCase
+import com.example.mymovies.domain.usecases.movie.list.GetTopRatedMovieListUseCase
+import com.example.mymovies.domain.usecases.movie.list.GetUpcomingMovieListUseCase
+import com.example.mymovies.domain.usecases.movie.list.GetPopularMovieListUseCase
 import com.example.mymovies.ui.movie_lists.state.MovieListState
 import com.example.mymovies.ui.movie_lists.state.MovieListViewState
 import com.example.mymovies.util.Resource
@@ -195,19 +195,37 @@ class MovieListsViewModel @Inject constructor(
 
     fun clickPopularFilter() {
         if (!_movieViewState.value.popularFilter) _movieListState.update { it.copy(page = 1) } else return
-        _movieViewState.update { it.copy(popularFilter = true, upcomingFilter = false, topRatedFilter = false) }
+        _movieViewState.update {
+            it.copy(
+                popularFilter = true,
+                upcomingFilter = false,
+                topRatedFilter = false
+            )
+        }
         getPopularMovieList(false)
     }
 
     fun clickUpcomingFilter() {
         if (!_movieViewState.value.upcomingFilter) _movieListState.update { it.copy(page = 1) } else return
-        _movieViewState.update { it.copy(popularFilter = false, upcomingFilter = true, topRatedFilter = false) }
+        _movieViewState.update {
+            it.copy(
+                popularFilter = false,
+                upcomingFilter = true,
+                topRatedFilter = false
+            )
+        }
         getUpcomingMovies(false)
     }
 
     fun clickTopRatedFilter() {
         if (!_movieViewState.value.topRatedFilter) _movieListState.update { it.copy(page = 1) } else return
-        _movieViewState.update { it.copy(popularFilter = false, upcomingFilter = false, topRatedFilter = true) }
+        _movieViewState.update {
+            it.copy(
+                popularFilter = false,
+                upcomingFilter = false,
+                topRatedFilter = true
+            )
+        }
         getTopRatedMovies(false)
     }
 

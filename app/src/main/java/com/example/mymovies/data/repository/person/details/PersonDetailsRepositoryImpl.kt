@@ -4,8 +4,10 @@ import com.example.mymovies.data.mappers.toPersonDetails
 import com.example.mymovies.data.remote.MovieApi
 import com.example.mymovies.domain.model.person.details.PersonDetails
 import com.example.mymovies.util.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.Locale
@@ -20,7 +22,9 @@ class PersonDetailsRepositoryImpl @Inject constructor(
             emit(Resource.Loading(true))
 
             try {
-                val detailsDto = movieApi.getPersonDetails(id, Locale.getDefault().toLanguageTag())
+                val detailsDto = withContext(Dispatchers.IO) {
+                    movieApi.getPersonDetails(id, Locale.getDefault().toLanguageTag())
+                }
                 val details = detailsDto.toPersonDetails()
                 if (details.biography.isBlank()) {
                     val bio = movieApi.getPersonDetails(id).biography

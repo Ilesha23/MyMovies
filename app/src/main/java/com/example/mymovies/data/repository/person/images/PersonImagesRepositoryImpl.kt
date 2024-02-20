@@ -3,8 +3,10 @@ package com.example.mymovies.data.repository.person.images
 import com.example.mymovies.data.mappers.toPersonImages
 import com.example.mymovies.data.remote.MovieApi
 import com.example.mymovies.util.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.Locale
@@ -17,7 +19,9 @@ class PersonImagesRepositoryImpl @Inject constructor(
     override suspend fun getPersonImages(id: Int): Flow<Resource<List<String>>> {
         return flow {
             try {
-                val imagesDto = movieApi.getPersonImages(id, Locale.getDefault().toLanguageTag())
+                val imagesDto = withContext(Dispatchers.IO) {
+                    movieApi.getPersonImages(id, Locale.getDefault().toLanguageTag())
+                }
                 val images = imagesDto.toPersonImages()
                 emit(Resource.Success(images))
                 emit(Resource.Loading(false))

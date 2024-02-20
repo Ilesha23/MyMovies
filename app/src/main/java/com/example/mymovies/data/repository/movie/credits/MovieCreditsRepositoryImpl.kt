@@ -6,9 +6,11 @@ import com.example.mymovies.domain.model.movie.credits.Cast
 import com.example.mymovies.domain.model.movie.credits.Crew
 import com.example.mymovies.domain.model.movie.credits.MovieCredits
 import com.example.mymovies.util.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.Locale
@@ -23,7 +25,9 @@ class MovieCreditsRepositoryImpl @Inject constructor(
             emit(Resource.Loading(true))
 
             try {
-                val remoteCredits = movieApi.getMovieCredits(id, Locale.getDefault().toLanguageTag())
+                val remoteCredits = withContext(Dispatchers.IO) {
+                    movieApi.getMovieCredits(id, Locale.getDefault().toLanguageTag())
+                }
                 val movieCredits = remoteCredits.toMovieCredits()
                 emit(Resource.Success(movieCredits))
                 emit(Resource.Loading(false))

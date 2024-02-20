@@ -1,4 +1,4 @@
-package com.example.mymovies.domain.usecases.movie.`\list`
+package com.example.mymovies.domain.usecases.movie.list
 
 import com.example.mymovies.data.repository.movie.list.MovieListRepositoryImpl
 import com.example.mymovies.domain.model.movie.movie.Movie

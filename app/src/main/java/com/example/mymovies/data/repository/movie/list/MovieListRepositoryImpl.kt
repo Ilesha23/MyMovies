@@ -6,8 +6,10 @@ import com.example.mymovies.data.mappers.toMovieEntity
 import com.example.mymovies.data.remote.MovieApi
 import com.example.mymovies.domain.model.movie.movie.Movie
 import com.example.mymovies.util.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.Locale
@@ -24,7 +26,9 @@ class MovieListRepositoryImpl @Inject constructor(
             emit(Resource.Loading(true))
 
             val remoteMovieList = try {
-                movieApi.getPopularMovieList(page = page, language = Locale.getDefault().toLanguageTag())
+                withContext(Dispatchers.IO) {
+                    movieApi.getPopularMovieList(page = page, language = Locale.getDefault().toLanguageTag())
+                }
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error(message = e.message))
@@ -56,7 +60,9 @@ class MovieListRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
 
             val remoteUpcomingMovieList = try {
-                movieApi.getUpcomingMovies(page, Locale.getDefault().toLanguageTag())
+                withContext(Dispatchers.IO) {
+                    movieApi.getUpcomingMovies(page, Locale.getDefault().toLanguageTag())
+                }
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error(message = e.message)) // TODO:
@@ -87,7 +93,9 @@ class MovieListRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
 
             val remoteTopRatedMovieList = try {
-                movieApi.getTopRatedMovies(page, Locale.getDefault().toLanguageTag())
+                withContext(Dispatchers.IO) {
+                    movieApi.getTopRatedMovies(page, Locale.getDefault().toLanguageTag())
+                }
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error(message = e.message)) // TODO:
