@@ -53,8 +53,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
@@ -69,7 +67,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun DetailsScreen(bacStackEntry: NavBackStackEntry, navController: NavHostController) {
+fun DetailsScreen(navController: NavHostController) {
     val viewModel = hiltViewModel<DetailsViewModel>()
     val detailsState = viewModel.detailsState.collectAsState().value
     val castState = viewModel.castState.collectAsState().value
@@ -90,7 +88,9 @@ fun DetailsScreen(bacStackEntry: NavBackStackEntry, navController: NavHostContro
 
         BackDrop(backdropsState)
 
-        Info(viewModel, navController, detailsState)
+        Info(viewModel, detailsState) { posterPath ->
+            navController.navigate(Screen.Poster.route + posterPath)
+        }
 
         Overview(detailsState)
 
@@ -105,7 +105,9 @@ fun DetailsScreen(bacStackEntry: NavBackStackEntry, navController: NavHostContro
             style = MaterialTheme.typography.titleMedium
         )
 
-        CastRow(castState, navController)
+        CastRow(castState) { castId ->
+            navController.navigate(Screen.PersonDetails.route + "/" + castId)
+        }
 
         Spacer(modifier = Modifier.padding(top = 16.dp))
 
@@ -117,7 +119,7 @@ fun DetailsScreen(bacStackEntry: NavBackStackEntry, navController: NavHostContro
             textAlign = TextAlign.Start,
             style = MaterialTheme.typography.titleMedium
         )
-        
+
         CrewRow(crewState)
 
         Spacer(modifier = Modifier.padding(top = 16.dp))
@@ -138,8 +140,8 @@ fun BackDrop(backdropsState: ImagesState) {
 @Composable
 fun Info(
     viewModel: DetailsViewModel,
-    navController: NavHostController,
-    detailsState: DetailsState
+    detailsState: DetailsState,
+    onClick: (String?) -> Unit
 ) {
     val posterState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
@@ -166,7 +168,7 @@ fun Info(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = false, radius = 0.dp)
                     ) {
-                        navController.navigate(Screen.Poster.route + detailsState.details?.poster_path)
+                        onClick(detailsState.details?.poster_path)
                     }
             )
         } else {
@@ -253,7 +255,10 @@ fun Overview(detailsState: DetailsState) {
 }
 
 @Composable
-fun CastRow(castState: CastState, navController: NavHostController) {
+fun CastRow(
+    castState: CastState,
+    onClick: (Int) -> Unit
+) {
     val cast = castState.cast
 
     LazyRow(
@@ -263,13 +268,21 @@ fun CastRow(castState: CastState, navController: NavHostController) {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(cast) {
-            CastCard(actor = it, navController = navController)
+            CastCard(
+                actor = it,
+                onClick = {
+                    onClick(it.id)
+                }
+            )
         }
     }
 }
 
 @Composable
-fun CastCard(actor: Cast, navController: NavController) {
+fun CastCard(
+    actor: Cast,
+    onClick: () -> Unit
+) {
     val posterState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(MovieApi.IMAGE_BASE_URL + actor.profile_path)
@@ -283,7 +296,7 @@ fun CastCard(actor: Cast, navController: NavController) {
                 .fillMaxSize()
                 .aspectRatio(500 / 750f)
                 .clickable {
-                    navController.navigate(Screen.PersonDetails.route + "/" + actor.id)
+                    onClick()
                 },
             contentAlignment = Alignment.BottomStart
         ) {

@@ -100,7 +100,9 @@ fun PopularMovieScreen(
                             ChipsRow()
                         }
                         items(movieState.list.size) { index ->
-                            MovieCard(movie = movieState.list[index], navHostController)
+                            MovieCard(movie = movieState.list[index]) {
+                                navHostController.navigate(Screen.Details.route + "/${movieState.list[index].id}")
+                            }
                             if (index == movieState.list.size - 1) {
                                 viewModel.onEvent(MovieListUiEvent.Paginate)
                             }
@@ -179,7 +181,7 @@ fun ChipsRow() {
 @Composable
 fun MovieCard(
     movie: Movie,
-    navHostController: NavHostController
+    onClick: () -> Unit
 ) {
     val imageState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
@@ -198,7 +200,7 @@ fun MovieCard(
         ),
         shape = RoundedCornerShape(20.dp),
         onClick = {
-            navHostController.navigate(Screen.Details.route + "/${movie.id}")
+            onClick()
         }
     ) {
         Column(
@@ -241,8 +243,8 @@ fun MovieCard(
                 fontWeight = FontWeight.Bold
             )
             runCatching {
-                val sdf = SimpleDateFormat("yyyy-MM-dd")
-                val dateFromString: Date? = sdf.parse(movie.release_date)
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+                val dateFromString: Date? = dateFormat.parse(movie.release_date)
                 val today = Date()
                 if (dateFromString?.before(today) == true || dateFromString == today) {
                     Text(

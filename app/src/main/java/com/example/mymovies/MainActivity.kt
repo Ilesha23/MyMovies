@@ -112,7 +112,7 @@ class MainActivity : ComponentActivity() {
                         Screen.Details.route + "/{movieId}",
                         arguments = listOf(navArgument("movieId") { type = NavType.IntType })
                     ) { bacStackEntry ->
-                        DetailsScreen(bacStackEntry, navController)
+                        DetailsScreen(navController)
                     }
                     composable(
                         Screen.PersonDetails.route + "/{personId}",
