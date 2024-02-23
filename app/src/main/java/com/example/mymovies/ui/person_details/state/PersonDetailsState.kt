@@ -5,6 +5,5 @@ import com.example.mymovies.domain.model.person.details.PersonDetails
 data class PersonDetailsState(
     val isLoading: Boolean = false,
     val details: PersonDetails?,
-    val images: List<String> = emptyList(),
     val error: String? = null
 )
