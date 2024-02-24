@@ -117,7 +117,7 @@ fun PersonDetailsScreen(backStackEntry: NavBackStackEntry, navController: NavHos
                         .padding(start = 16.dp)
                 )
                 CreditsRow(
-                    items = creditsState.cast ?: emptyList(),
+                    items = creditsState.cast,
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1.7f)
@@ -136,7 +136,7 @@ fun PersonDetailsScreen(backStackEntry: NavBackStackEntry, navController: NavHos
                         .padding(start = 16.dp)
                 )
                 CreditsRow(
-                    items = creditsState.crew ?: emptyList(),
+                    items = creditsState.crew,
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1.5f)
