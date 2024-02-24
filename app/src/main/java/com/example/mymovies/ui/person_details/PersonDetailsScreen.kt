@@ -109,36 +109,40 @@ fun PersonDetailsScreen(backStackEntry: NavBackStackEntry, navController: NavHos
 
             Spacer(modifier = Modifier.size(16.dp))
 
-            Text(
-                text = stringResource(id = R.string.cast),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier
-                    .padding(start = 16.dp)
-            )
-            CreditsRow(
-                items = creditsState.cast ?: emptyList(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1.7f)
-            ) {
-                CastCard(it)
+            if (creditsState.cast?.isEmpty() == false) {
+                Text(
+                    text = stringResource(id = R.string.cast),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                )
+                CreditsRow(
+                    items = creditsState.cast ?: emptyList(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1.7f)
+                ) {
+                    CastCard(it)
+                }
             }
 
             Spacer(modifier = Modifier.size(16.dp))
 
-            Text(
-                text = stringResource(id = R.string.crew),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier
-                    .padding(start = 16.dp)
-            )
-            CreditsRow(
-                items = creditsState.crew ?: emptyList(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1.5f)
-            ) {
-                CrewCard(it)
+            if (creditsState.crew?.isEmpty() == false) {
+                Text(
+                    text = stringResource(id = R.string.crew),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                )
+                CreditsRow(
+                    items = creditsState.crew ?: emptyList(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1.5f)
+                ) {
+                    CrewCard(it)
+                }
             }
 
             Spacer(modifier = Modifier.size(16.dp))
