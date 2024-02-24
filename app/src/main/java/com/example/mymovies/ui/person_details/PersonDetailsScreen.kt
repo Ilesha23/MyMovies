@@ -1,13 +1,17 @@
 package com.example.mymovies.ui.person_details
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -24,8 +28,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -74,7 +80,7 @@ fun PersonDetailsScreen(backStackEntry: NavBackStackEntry, navController: NavHos
                 photoUris = imagesState.images,
                 Modifier
                     .fillMaxWidth()
-                    .aspectRatio(16 / 9f)
+                    .aspectRatio(16 / 10f)
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -100,14 +106,18 @@ fun PhotosPager(photoUris: List<String>, modifier: Modifier = Modifier) {
         pagerSnapDistance = PagerSnapDistance.atMost(1)
     )
 
+    val padding = LocalConfiguration.current.screenWidthDp / 3.4
+
     HorizontalPager(
         state = pagerState,
         modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 130.dp),
+        contentPadding = PaddingValues(horizontal = padding.dp),
         flingBehavior = fling
     ) { page ->
         Card(
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
             modifier = Modifier
+                .fillMaxHeight()
                 .graphicsLayer {
                     val pageOffset = (
                             (pagerState.currentPage - page) + pagerState
@@ -154,7 +164,7 @@ fun PhotoCard(uri: String) {
             contentDescription = null,
             contentScale = ContentScale.FillHeight,
             modifier = Modifier
-                .aspectRatio(9 / 16f)
+                .fillMaxHeight()
         )
     } else {
         Image(imageVector = Icons.Rounded.ImageNotSupported, contentDescription = null)
