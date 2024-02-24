@@ -207,7 +207,7 @@ fun MovieCard(
         ) {
             Box(
                 modifier = Modifier
-                    .aspectRatio(9 / 16f)
+                    .aspectRatio(0.667f)
                     .fillMaxSize()
                     .clip(RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.BottomStart
