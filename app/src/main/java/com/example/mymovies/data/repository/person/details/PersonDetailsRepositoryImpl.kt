@@ -28,7 +28,7 @@ class PersonDetailsRepositoryImpl @Inject constructor(
                 val details = detailsDto.toPersonDetails()
                 if (details.biography.isBlank()) {
                     val bio = movieApi.getPersonDetails(id).biography
-                    val detailsWithBio = details.copy(biography = "(no info provided for your language) $bio")
+                    val detailsWithBio = details.copy(biography = bio.orEmpty())
                     emit(Resource.Success(detailsWithBio))
                 } else {
                     emit(Resource.Success(details))

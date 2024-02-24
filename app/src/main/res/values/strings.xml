@@ -12,4 +12,5 @@
     <string name="cast">Cast</string>
     <string name="crew">Crew</string>
     <string name="biography">Biography</string>
+    <string name="no_info_for_your_language">(no info for your language)</string>
 </resources>

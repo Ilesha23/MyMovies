@@ -3,8 +3,10 @@ package com.example.mymovies.ui.person_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mymovies.domain.usecases.person.credits.GetPersonCreditsUseCase
 import com.example.mymovies.domain.usecases.person.details.GetPersonDetailsUseCase
 import com.example.mymovies.domain.usecases.person.images.GetPersonImagesUseCase
+import com.example.mymovies.ui.person_details.state.PersonCreditsState
 import com.example.mymovies.ui.person_details.state.PersonDetailsState
 import com.example.mymovies.ui.person_details.state.PersonImagesState
 import com.example.mymovies.util.Resource
@@ -20,6 +22,7 @@ import javax.inject.Inject
 class PersonDetailsViewModel @Inject constructor(
     private val getPersonDetailsUseCase: GetPersonDetailsUseCase,
     private val getPersonImagesUseCase: GetPersonImagesUseCase,
+    private val getPersonCreditsUseCase: GetPersonCreditsUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val personId = savedStateHandle.get<Int>("personId")
@@ -30,9 +33,13 @@ class PersonDetailsViewModel @Inject constructor(
     private val _imagesState = MutableStateFlow(PersonImagesState())
     val imagesState = _imagesState.asStateFlow()
 
+    private val _creditsState = MutableStateFlow(PersonCreditsState())
+    val creditsState = _creditsState.asStateFlow()
+
     init {
         getDetails(personId ?: -1)
         getImages(personId ?: -1)
+        getPersonCredits(personId ?: -1)
     }
 
     private fun getDetails(id: Int) {
@@ -92,7 +99,7 @@ class PersonDetailsViewModel @Inject constructor(
 
             getPersonImagesUseCase(id)
                 .collectLatest { resource ->
-                    when(resource) {
+                    when (resource) {
                         is Resource.Success -> {
                             _imagesState.update {
                                 it.copy(
@@ -115,6 +122,51 @@ class PersonDetailsViewModel @Inject constructor(
 
                         is Resource.Loading -> {
                             _imagesState.update {
+                                it.copy(
+                                    isLoading = true,
+                                    error = null
+                                )
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun getPersonCredits(id: Int) {
+        viewModelScope.launch {
+            _creditsState.update {
+                it.copy(
+                    isLoading = true,
+                    error = null
+                )
+            }
+
+            getPersonCreditsUseCase(id)
+                .collectLatest { resource ->
+                    when (resource) {
+                        is Resource.Success -> {
+                            _creditsState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    crew = resource.data?.crew ?: emptyList(),
+                                    cast = resource.data?.cast ?: emptyList(),
+                                    error = null
+                                )
+                            }
+                        }
+
+                        is Resource.Error -> {
+                            _creditsState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    error = it.error
+                                )
+                            }
+                        }
+
+                        is Resource.Loading -> {
+                            _creditsState.update {
                                 it.copy(
                                     isLoading = true,
                                     error = null

@@ -13,4 +13,5 @@
     <string name="cast">Актори</string>
     <string name="crew">Команда</string>
     <string name="biography">Біографія</string>
+    <string name="no_info_for_your_language">(нема інформації для вашої мови)</string>
 </resources>

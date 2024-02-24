@@ -4,11 +4,13 @@ import com.example.mymovies.data.remote.response.movie.movie.MovieListDto
 import com.example.mymovies.data.remote.response.movie.credits.MovieCreditsDto
 import com.example.mymovies.data.remote.response.movie.details.MovieDetailsDto
 import com.example.mymovies.data.remote.response.movie.images.MovieImagesDto
+import com.example.mymovies.data.remote.response.person.credits.PersonCreditsDto
 import com.example.mymovies.data.remote.response.person.details.PersonDetailsDto
 import com.example.mymovies.data.remote.response.person.images.PersonImagesDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.util.Locale
 
 interface MovieApi {
 
@@ -17,7 +19,7 @@ interface MovieApi {
     @GET("movie/popular")
     suspend fun getPopularMovieList(
         @Query("page") page: Int,
-        @Query("language") language: String = "en-US",
+        @Query("language") language: String = Locale.US.toLanguageTag(),
         @Query("api_key") apiKey: String = API_KEY
     ): MovieListDto
 
@@ -26,21 +28,21 @@ interface MovieApi {
     @GET("movie/upcoming")
     suspend fun getUpcomingMovies(
         @Query("page") page: Int,
-        @Query("language") language: String = "en-US",
+        @Query("language") language: String = Locale.US.toLanguageTag(),
         @Query("api_key") apiKey: String = API_KEY
     ): MovieListDto
 
     @GET("movie/top_rated")
     suspend fun getTopRatedMovies(
         @Query("page") page: Int,
-        @Query("language") language: String = "en-US",
+        @Query("language") language: String = Locale.US.toLanguageTag(),
         @Query("api_key") apiKey: String = API_KEY
     ): MovieListDto
 
     @GET("movie/{movie_id}")
     suspend fun getMovieDetails(
         @Path("movie_id") movieId: Int,
-        @Query("language") language: String = "en-US",
+        @Query("language") language: String = Locale.US.toLanguageTag(),
         @Query("api_key") apiKey: String = API_KEY
     ): MovieDetailsDto
 
@@ -54,23 +56,30 @@ interface MovieApi {
     @GET("movie/{movie_id}/credits")
     suspend fun getMovieCredits(
         @Path("movie_id") movieId: Int,
-        @Query("include_image_language") language: String = "en-US",
+        @Query("include_image_language") language: String = Locale.US.toLanguageTag(),
         @Query("api_key") apiKey: String = API_KEY
     ): MovieCreditsDto
 
     @GET("person/{person_id}")
     suspend fun getPersonDetails(
         @Path("person_id") personId: Int,
-        @Query("language") language: String = "en-US",
+        @Query("language") language: String = Locale.US.toLanguageTag(),
         @Query("api_key") apiKey: String = API_KEY
     ): PersonDetailsDto
 
     @GET("person/{person_id}/images")
     suspend fun getPersonImages(
         @Path("person_id") id: Int,
-        @Query("include_image_language") language: String = "en-US",
+        @Query("include_image_language") language: String = Locale.US.toLanguageTag(),
         @Query("api_key") apiKey: String = API_KEY
     ): PersonImagesDto
+
+    @GET("person/{person_id}/movie_credits")
+    suspend fun getPersonCredits(
+        @Path("person_id") id: Int,
+        @Query("language") language: String = Locale.US.toLanguageTag(),
+        @Query("api_key") apiKey: String = API_KEY
+    ): PersonCreditsDto
 
 
 
