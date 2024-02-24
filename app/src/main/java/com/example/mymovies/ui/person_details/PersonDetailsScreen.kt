@@ -264,7 +264,7 @@ fun CastCard(cast: PersonCast) {
                 Image(
                     painter = posterState.painter,
                     contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .aspectRatio(0.667f)
                 )
