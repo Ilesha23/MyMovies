@@ -1,5 +1,8 @@
 package com.example.mymovies.ui.movie_details
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -241,29 +244,51 @@ fun Info(
 fun Overview(detailsState: DetailsState) {
     var expanded by remember { mutableStateOf(false) }
 
+    val maxLines = if (expanded) Int.MAX_VALUE else 3
+    val overflow = if (expanded) TextOverflow.Clip else TextOverflow.Ellipsis
+
+    val tagline = detailsState.details?.tagline.orEmpty()
+    val overview = detailsState.details?.overview.orEmpty()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = detailsState.details?.tagline.orEmpty(),
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.padding(top = 8.dp))
-        Text(
-            text = detailsState.details?.overview.orEmpty(),
-            maxLines = if (expanded) Int.MAX_VALUE else 3,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .clickable {
-                    expanded = !expanded
-                }
-        )
+        if (tagline.isNotEmpty()) {
+            Text(
+                text = tagline,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.padding(top = 8.dp))
+        }
+
+        if (overview.isNotEmpty()) {
+            LaunchedEffect(overview) {
+                expanded = false
+            }
+
+            Text(
+                text = overview,
+                maxLines = maxLines,
+                overflow = overflow,
+                modifier = Modifier
+                    .clickable {
+                        expanded = !expanded
+                    }
+                    .animateContentSize(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    )
+            )
+        }
     }
 }
+
 
 @Composable
 fun CastRow(
@@ -301,6 +326,11 @@ fun CastCard(
             .build()
     ).state
 
+    val colorStops = arrayOf(
+        0.7f to Color.Transparent,
+        1f to Color.Black
+    )
+
     Card {
         Box(
             modifier = Modifier
@@ -332,14 +362,7 @@ fun CastCard(
                     .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Transparent,
-                                Color.Transparent,
-                                Color.Black
-                            ),
-                            startY = 0f,
-                            endY = 700f
+                            colorStops = colorStops
                         )
                     ),
                 contentAlignment = Alignment.BottomStart
@@ -390,6 +413,11 @@ fun CrewCard(
             .build()
     ).state
 
+    val colorStops = arrayOf(
+        0.6f to Color.Transparent,
+        1f to Color.Black
+    )
+
     Card {
         Box(
             modifier = Modifier
@@ -421,14 +449,7 @@ fun CrewCard(
                     .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Transparent,
-                                Color.Transparent,
-                                Color.Black
-                            ),
-                            startY = 0f,
-                            endY = 700f
+                            colorStops = colorStops
                         )
                     ),
                 contentAlignment = Alignment.BottomStart
