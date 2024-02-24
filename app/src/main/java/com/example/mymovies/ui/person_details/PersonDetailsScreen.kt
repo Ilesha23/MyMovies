@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ImageNotSupported
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -36,6 +39,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
+import com.example.mymovies.R
 import com.example.mymovies.data.remote.MovieApi.Companion.IMAGE_BASE_URL
 import kotlin.math.absoluteValue
 
@@ -54,17 +58,30 @@ fun PersonDetailsScreen(backStackEntry: NavBackStackEntry, navController: NavHos
             modifier = Modifier
                 .fillMaxSize()
         ) {
+
             Spacer(modifier = Modifier.size(16.dp))
-            Text(text = detailsState.details?.name.orEmpty(), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+
+            Text(
+                text = detailsState.details?.name.orEmpty(),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge
+            )
+
             Spacer(modifier = Modifier.size(16.dp))
+
             PhotosPager(
                 photoUris = imagesState.images,
                 Modifier
                     .fillMaxWidth()
                     .aspectRatio(16 / 9f)
             )
+
             Spacer(modifier = Modifier.size(16.dp))
+
+            Text(text = stringResource(id = R.string.biography), style = MaterialTheme.typography.titleMedium)
             Text(text = detailsState.details?.biography.orEmpty())
+
         }
     }
 
@@ -123,7 +140,7 @@ fun PhotosPager(photoUris: List<String>, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PhotoCard(uri: String, modifier: Modifier = Modifier) {
+fun PhotoCard(uri: String) {
     val imageState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(IMAGE_BASE_URL + uri)

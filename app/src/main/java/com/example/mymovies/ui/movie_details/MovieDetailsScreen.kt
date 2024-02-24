@@ -191,7 +191,11 @@ fun Info(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = detailsState.details?.title.orEmpty(), textAlign = TextAlign.Center)
+            Text(
+                text = detailsState.details?.title.orEmpty(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium
+            )
             Row {
 
                 Column(
