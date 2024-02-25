@@ -149,8 +149,8 @@ class PersonDetailsViewModel @Inject constructor(
                             _creditsState.update {
                                 it.copy(
                                     isLoading = false,
-                                    crew = resource.data?.crew?.sortedByDescending { it.vote_count / it.vote_average }?.sortedByDescending { it.vote_count } ?: emptyList(),
-                                    cast = resource.data?.cast?.sortedByDescending { it.vote_count / it.vote_average }?.sortedByDescending { it.vote_count } ?: emptyList(),
+                                    crew = resource.data?.crew?.sortedByDescending { it.vote_count } ?: emptyList(),
+                                    cast = resource.data?.cast?.sortedByDescending { it.vote_count } ?: emptyList(),
                                     error = null
                                 )
                             }
