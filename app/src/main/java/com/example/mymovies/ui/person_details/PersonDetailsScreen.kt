@@ -3,6 +3,7 @@ package com.example.mymovies.ui.person_details
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -54,6 +55,7 @@ import com.example.mymovies.R
 import com.example.mymovies.data.remote.MovieApi.Companion.IMAGE_BASE_URL
 import com.example.mymovies.domain.model.person.credits.PersonCast
 import com.example.mymovies.domain.model.person.credits.PersonCrew
+import com.example.mymovies.util.Screen
 import kotlin.math.absoluteValue
 
 @Composable
@@ -126,7 +128,9 @@ fun PersonDetailsScreen(backStackEntry: NavBackStackEntry, navController: NavHos
                         .fillMaxWidth()
                         .aspectRatio(1.7f)
                 ) {
-                    CastCard(it)
+                    CastCard(it) { id ->
+                        navController.navigate(Screen.Details.route + "/$id")
+                    }
                 }
             }
 
@@ -145,7 +149,9 @@ fun PersonDetailsScreen(backStackEntry: NavBackStackEntry, navController: NavHos
                         .fillMaxWidth()
                         .aspectRatio(1.5f)
                 ) {
-                    CrewCard(it)
+                    CrewCard(it) { id ->
+                        navController.navigate(Screen.Details.route + "/$id")
+                    }
                 }
             }
 
@@ -252,7 +258,7 @@ fun <T> CreditsRow(
 }
 
 @Composable
-fun CastCard(cast: PersonCast) {
+fun CastCard(cast: PersonCast, onClick: (Int) -> Unit) {
     val posterState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(IMAGE_BASE_URL + cast.poster_path)
@@ -267,6 +273,9 @@ fun CastCard(cast: PersonCast) {
         Card(
             modifier = Modifier
                 .fillMaxSize()
+                .clickable {
+                    onClick(cast.id)
+                }
         ) {
             if (posterState is AsyncImagePainter.State.Success) {
                 Image(
@@ -296,7 +305,7 @@ fun CastCard(cast: PersonCast) {
 }
 
 @Composable
-fun CrewCard(crew: PersonCrew) {
+fun CrewCard(crew: PersonCrew, onClick: (Int) -> Unit) {
     val posterState = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(IMAGE_BASE_URL + crew.poster_path)
@@ -311,6 +320,9 @@ fun CrewCard(crew: PersonCrew) {
         Card(
             modifier = Modifier
                 .fillMaxSize()
+                .clickable {
+                    onClick(crew.id)
+                }
         ) {
             if (posterState is AsyncImagePainter.State.Success) {
                 Image(

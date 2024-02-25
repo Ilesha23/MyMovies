@@ -299,7 +299,8 @@ fun CastRow(
 
     LazyRow(
         modifier = Modifier
-            .height(200.dp),
+            .height(200.dp)
+            .fillMaxWidth(),
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -389,7 +390,8 @@ fun CrewRow(
 
     LazyRow(
         modifier = Modifier
-            .height(200.dp),
+            .height(200.dp)
+            .fillMaxWidth(),
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -481,6 +483,9 @@ fun CrewCard(
 @Composable
 fun InfiniteImageSlider(paths: List<String>) {
     val images = paths.take(30)
+    if (images.isEmpty()) {
+        return
+    }
     val pagerState = rememberPagerState(pageCount = {
         images.size
     })
@@ -501,11 +506,13 @@ fun InfiniteImageSlider(paths: List<String>) {
 
         LaunchedEffect(key1 = pagerScrollState) {
             launch {
-                delay(2000)
-                val nexPage = (pagerState.currentPage + 1) % pagerState.pageCount
-                val newPage = if (nexPage > pagerState.pageCount) 0 else nexPage
-                pagerState.animateScrollToPage(newPage)
-                pagerScrollState = !pagerScrollState
+                if (pagerState.pageCount > 0) {
+                    delay(2000)
+                    val nexPage = (pagerState.currentPage + 1) % pagerState.pageCount
+                    val newPage = if (nexPage > pagerState.pageCount) 0 else nexPage
+                    pagerState.animateScrollToPage(newPage)
+                    pagerScrollState = !pagerScrollState
+                }
             }
         }
 
